@@ -110,9 +110,28 @@ int main(int argc, char **argv){
 		}
 	}
 
+	//新しく割り出した頂点の出力
 	for (int i = 0; i < anscount; i++){
 		cout << ans[i] << endl;
 	}
+
+	//頂点から辺の割り出し
+	double sen[50];
+	for (int i = 0; i < anscount; i++){
+		if (i == anscount - 1){
+			root = (ans[i].x - ans[0].x)*(ans[i].x - ans[0].x) + (ans[i].y - ans[0].y)*(ans[i].y - ans[0].y);
+			sen[i] = sqrt(root);
+		}
+		else{
+			root = (ans[i].x - ans[i + 1].x)*(ans[i].x - ans[i + 1].x) + (ans[i].y - ans[i + 1].y)*(ans[i].y - ans[i + 1].y);
+			sen[i] = sqrt(root);
+		}
+	}
+	for (int i = 0; i < anscount; i++){
+		cout << sen[i] << endl;
+	}
+
+	//図形の再形成
 	for (int i = 0; i < anscount; i++){
 		if (i != anscount - 1){
 			line(img, Point(ans[i].x, ans[i].y), Point(ans[i + 1].x, ans[i + 1].y), Scalar(0, 0, 255), 3, 8);

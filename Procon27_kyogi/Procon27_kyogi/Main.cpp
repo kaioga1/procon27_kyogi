@@ -21,13 +21,13 @@ Mat color_im = imread("IMGP.jpg", 1);
 Mat im_canny, im_sobel, im_laplacian;
 Mat img = Mat::zeros(600, 600, CV_8UC3);
 
-int main(int argc, char **argv){
-	int i,j=0,k = 0,x = 0;
+int main(int argc, char **argv) {
+	int i, j = 0, k = 0, x = 0;
 	double root;
 	int hoge = 0;
 
 
-	if (!im.data){
+	if (!im.data) {
 		return -1;
 	}
 
@@ -41,32 +41,32 @@ int main(int argc, char **argv){
 
 	//確率的ハフ変換による線分の検出＆描画
 	vector<Vec4i> lines;
-	
+
 	HoughLinesP(im_canny, lines, 1, CV_PI / 180, 85, 30, 10);
 	for (size_t i = 0; i < lines.size(); i++)
 	{
-	line(color_im, Point(lines[i][0], lines[i][1]),
-	Point(lines[i][2], lines[i][3]), Scalar(0, 0, 255), 2, 8);
+		line(color_im, Point(lines[i][0], lines[i][1]),
+			Point(lines[i][2], lines[i][3]), Scalar(0, 0, 255), 2, 8);
 	}
 
 	//直線の端の座標から頂点を割り出す
 	Point ten[1600];
 	Point ans[1600];
 	Point zero = 0;
-	for (size_t i = 0; i < lines.size(); i++){
-		for (int j = 0; j < 4; j++){
-			if (j % 2 == 0){
+	for (size_t i = 0; i < lines.size(); i++) {
+		for (int j = 0; j < 4; j++) {
+			if (j % 2 == 0) {
 				ten[k].x = lines[i][j];
 				k++;
 			}
-			else{
+			else {
 				ten[x].y = lines[i][j];
 				x++;
 			}
 		}
 	}
-	for (i = 0; i < 1600; i++){
-		if (ten[i] == zero){
+	for (i = 0; i < 1600; i++) {
+		if (ten[i] == zero) {
 			break;
 		}
 		cout << ten[i] << endl;
@@ -77,7 +77,7 @@ int main(int argc, char **argv){
 
 	cout << "mikan" << endl;
 
-	for (int j = 0; j < i; j++){
+	for (int j = 0; j < i; j++) {
 		circle(color_im, Point(ten[j].x, ten[j].y), 10, Scalar(0, 255, 0), 1, 8);
 	}
 
@@ -85,19 +85,19 @@ int main(int argc, char **argv){
 	int m = 0;
 	int count = 0;
 	int anscount = 0;
-	for (int j = 0; j < 1600; j++){
-		for (int x = 0; x < i; x++){
-			if (ten[m].x + j >= ten[x].x && ten[m].x - j <= ten[x].x && ten[m].y + j >= ten[x].y && ten[m].y - j <= ten[x].y && ten[m] != ten[x]){
-				if (j <= 5){
+	for (int j = 0; j < 1600; j++) {
+		for (int x = 0; x < i; x++) {
+			if (ten[m].x + j >= ten[x].x && ten[m].x - j <= ten[x].x && ten[m].y + j >= ten[x].y && ten[m].y - j <= ten[x].y && ten[m] != ten[x]) {
+				if (j <= 5) {
 					ans[anscount] = (ten[m] + ten[x]) / 2;
 					cout << "!";
 					anscount++;
 				}
 				cout << ten[m] << ten[x] << endl;
-				if (x % 2 == 1){
+				if (x % 2 == 1) {
 					m = x - 1;
 				}
-				else{
+				else {
 					m = x + 1;
 				}
 				count++;
@@ -105,38 +105,38 @@ int main(int argc, char **argv){
 				break;
 			}
 		}
-		if (count == i / 2 -1){
+		if (count == i / 2 - 1) {
 			break;
 		}
 	}
 
 	//新しく割り出した頂点の出力
-	for (int i = 0; i < anscount; i++){
+	for (int i = 0; i < anscount; i++) {
 		cout << ans[i] << endl;
 	}
 
 	//頂点から辺の割り出し
 	double sen[50];
-	for (int i = 0; i < anscount; i++){
-		if (i == anscount - 1){
+	for (int i = 0; i < anscount; i++) {
+		if (i == anscount - 1) {
 			root = (ans[i].x - ans[0].x)*(ans[i].x - ans[0].x) + (ans[i].y - ans[0].y)*(ans[i].y - ans[0].y);
 			sen[i] = sqrt(root);
 		}
-		else{
+		else {
 			root = (ans[i].x - ans[i + 1].x)*(ans[i].x - ans[i + 1].x) + (ans[i].y - ans[i + 1].y)*(ans[i].y - ans[i + 1].y);
 			sen[i] = sqrt(root);
 		}
 	}
-	for (int i = 0; i < anscount; i++){
+	for (int i = 0; i < anscount; i++) {
 		cout << sen[i] << endl;
 	}
 
 	//図形の再形成
-	for (int i = 0; i < anscount; i++){
-		if (i != anscount - 1){
+	for (int i = 0; i < anscount; i++) {
+		if (i != anscount - 1) {
 			line(img, Point(ans[i].x, ans[i].y), Point(ans[i + 1].x, ans[i + 1].y), Scalar(0, 0, 255), 3, 8);
 		}
-		else{
+		else {
 			line(img, Point(ans[i].x, ans[i].y), Point(ans[0].x, ans[0].y), Scalar(0, 0, 255), 3, 8);
 		}
 	}

@@ -44,6 +44,11 @@ public:
 	shared_ptr<vector<double> > get_line_lengths() const { return line_lengths; }
 	shared_ptr<vector<cv::Point> > get_angle() const { return angle; }
 	shared_ptr<vector<cv::Point> > get_vertex() const { return vertex; }
+	//必要そうなのでseter
+	void get_number_of_corner(int num ) { number_of_corner = num; }
+	void get_line_lengths(shared_ptr<vector<double> > lengths) { line_lengths = lengths; }
+	void get_angle(shared_ptr<vector<cv::Point> > ang) { angle = ang; }
+	void get_vertex(shared_ptr<vector<cv::Point> > ver){ vertex = ver; }
 
 private:
 	//何角形か

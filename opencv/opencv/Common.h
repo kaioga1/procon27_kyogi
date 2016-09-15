@@ -57,3 +57,23 @@ private:
 	//頂点
 	shared_ptr<vector<cv::Point> > vertex;
 };
+
+//ピースのマネジャー
+/*
+使い方
+制約などは基本的にPieceと同じ
+コチラは複数のピースをまとめるためのクラス
+*/
+class PieceManager {
+public:
+	//デフォルトコンストラクタはなしで！
+	PieceManager(shared_ptr<vector<Piece> > pieces): pieces(pieces){}
+
+	//アクセサ
+	shared_ptr<vector<Piece> > get_pieces() const { return pieces; }
+	
+
+private:
+	//ピースの配列
+	shared_ptr<vector<Piece> > pieces;
+};

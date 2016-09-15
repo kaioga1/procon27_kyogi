@@ -21,3 +21,13 @@ cvの名前空間は今回はなしにしましょう
 */
 //using namespace cv;
 using namespace std;
+
+/*class Piece {
+private:
+	//関数
+public:
+	//関数
+
+private:
+	//変数
+};*/

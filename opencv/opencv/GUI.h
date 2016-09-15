@@ -1,4 +1,10 @@
-#pragma once
+﻿#pragma once
 # include "Common.h"
 
-void GUI();
+
+//表示用のクラス
+
+class GUI {
+private:
+public:
+};

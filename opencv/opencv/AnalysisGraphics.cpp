@@ -1,30 +1,27 @@
-#include "opencv2\opencv.hpp"
-#include <math.h>
-#include <iostream>
-#include <queue>
-#include <vector>
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv/cvaux.h>
-using namespace cv;
-using namespace std;
+ï»¿# include "AnalysisGraphics.h"
 
-double cor_x[100] = { 0 };
-double cor_y[100] = { 0 };
-double sen[100] = { 0 };
+int AnalysisGraphics() {
+	//ã‚°ãƒ­ãƒ¼ãƒãƒ«ã«ã‚ã£ãŸå¤‰æ•°ã‚’ç§»å‹•
+	double cor_x[100] = { 0 };
+	double cor_y[100] = { 0 };
+	double sen[100] = { 0 };
 
-char no[300];
+	char no[300];
 
-Mat im = imread("IMGP.jpg", 0);
-Mat color_im = imread("IMGP.jpg", 1);
-Mat im_canny, im_sobel, im_laplacian;
-Mat img = Mat::zeros(600, 600, CV_8UC3);
 
-int main(int argc, char **argv) {
+	Mat im = imread("item\IMGP.jpg", 0);
+	Mat color_im = imread("item\IMGP.jpg", 1);
+	Mat im_canny, im_sobel, im_laplacian;
+	Mat img = Mat::zeros(600, 600, CV_8UC3);
+
+
+
 	int i, j = 0, k = 0, x = 0;
 	double root;
 	int hoge = 0;
+	double naiseki[50];
+	double angle[32];
+	double pie = 3.141592;
 
 
 	if (!im.data) {
@@ -39,7 +36,7 @@ int main(int argc, char **argv) {
 	Laplacian(im, im_laplacian, CV_32F, 3);
 	convertScaleAbs(im_laplacian, im_laplacian, 1, 0);
 
-	//Šm—¦“Iƒnƒt•ÏŠ·‚É‚æ‚éü•ª‚ÌŒŸo••`‰æ
+	//ç¢ºç‡çš„ãƒãƒ•å¤‰æ›ã«ã‚ˆã‚‹ç·šåˆ†ã®æ¤œå‡ºï¼†æç”»
 	vector<Vec4i> lines;
 
 	HoughLinesP(im_canny, lines, 1, CV_PI / 180, 85, 30, 10);
@@ -49,7 +46,7 @@ int main(int argc, char **argv) {
 			Point(lines[i][2], lines[i][3]), Scalar(0, 0, 255), 2, 8);
 	}
 
-	//’¼ü‚Ì’[‚ÌÀ•W‚©‚ç’¸“_‚ğŠ„‚èo‚·
+	//ç›´ç·šã®ç«¯ã®åº§æ¨™ã‹ã‚‰é ‚ç‚¹ã‚’å‰²ã‚Šå‡ºã™
 	Point ten[1600];
 	Point ans[1600];
 	Point zero = 0;
@@ -81,7 +78,7 @@ int main(int argc, char **argv) {
 		circle(color_im, Point(ten[j].x, ten[j].y), 10, Scalar(0, 255, 0), 1, 8);
 	}
 
-	//’¸“_‚ÌŠ„‚èo‚µ
+	//é ‚ç‚¹ã®å‰²ã‚Šå‡ºã—
 	int m = 0;
 	int count = 0;
 	int anscount = 0;
@@ -110,12 +107,12 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	//V‚µ‚­Š„‚èo‚µ‚½’¸“_‚Ìo—Í
+	//æ–°ã—ãå‰²ã‚Šå‡ºã—ãŸé ‚ç‚¹ã®å‡ºåŠ›
 	for (int i = 0; i < anscount; i++) {
 		cout << ans[i] << endl;
 	}
 
-	//’¸“_‚©‚ç•Ó‚ÌŠ„‚èo‚µ
+	//é ‚ç‚¹ã‹ã‚‰è¾ºã®å‰²ã‚Šå‡ºã—
 	double sen[50];
 	for (int i = 0; i < anscount; i++) {
 		if (i == anscount - 1) {
@@ -131,7 +128,23 @@ int main(int argc, char **argv) {
 		cout << sen[i] << endl;
 	}
 
-	//}Œ`‚ÌÄŒ`¬
+	//è§’åº¦ã®å‰²ã‚Šå‡ºã—
+	for (int i = 0; i < anscount; i++) {
+		if (i == anscount - 1) {
+			naiseki[i] = (ans[i].x - ans[0].x);
+			angle[i] = naiseki[i] / (sen[i] * sen[0]);
+			angle[i] = acos(angle[i]);
+			angle[i] = angle[i] * 180.0;
+		}
+		else {
+			angle[i] = naiseki[i] / (sen[i] * sen[i + 1]);
+			angle[i] = acos(angle[i]);
+			angle[i] = angle[i] * 180.0;
+		}
+		cout << angle[i] << endl;
+	}
+
+	//å›³å½¢ã®å†å½¢æˆ
 	for (int i = 0; i < anscount; i++) {
 		if (i != anscount - 1) {
 			line(img, Point(ans[i].x, ans[i].y), Point(ans[i + 1].x, ans[i + 1].y), Scalar(0, 0, 255), 3, 8);
@@ -145,10 +158,8 @@ int main(int argc, char **argv) {
 	imshow("sobel", im_sobel);
 	imshow("laplacian", im_laplacian);
 	imshow("original", im);
-	imshow("‚Í‚Ó", color_im);
-	imshow("Ä¶¬", img);
+	imshow("ã¯ãµ", color_im);
+	imshow("å†ç”Ÿæˆ", img);
 
 	waitKey(0);
-
-	return 0;
 }

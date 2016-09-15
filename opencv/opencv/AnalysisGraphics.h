@@ -11,4 +11,4 @@
 using namespace cv;
 using namespace std;
 
-int analysisGraphics();
+int AnalysisGraphics();

@@ -69,6 +69,8 @@ public:
 
 	//アクセサ
 	shared_ptr<vector<Piece> > get_pieces() const { return pieces; }
+	//num番目のピースを返す(未実装
+	//shared_ptr<Piece> get_p(int num) const { return pieces[num]; }
 	
 
 private:

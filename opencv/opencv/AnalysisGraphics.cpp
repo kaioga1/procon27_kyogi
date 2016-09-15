@@ -9,10 +9,10 @@ int AnalysisGraphics() {
 	char no[300];
 
 
-	Mat im = imread("item\IMGP.jpg", 0);
-	Mat color_im = imread("item\IMGP.jpg", 1);
-	Mat im_canny, im_sobel, im_laplacian;
-	Mat img = Mat::zeros(600, 600, CV_8UC3);
+	cv::Mat im = cv::imread("item\IMGP.jpg", 0);
+	cv::Mat color_im = cv::imread("item\IMGP.jpg", 1);
+	cv::Mat im_canny, im_sobel, im_laplacian;
+	cv::Mat img = cv::Mat::zeros(600, 600, CV_8UC3);
 
 
 
@@ -37,19 +37,19 @@ int AnalysisGraphics() {
 	convertScaleAbs(im_laplacian, im_laplacian, 1, 0);
 
 	//確率的ハフ変換による線分の検出＆描画
-	vector<Vec4i> lines;
+	vector<cv::Vec4i> lines;
 
 	HoughLinesP(im_canny, lines, 1, CV_PI / 180, 85, 30, 10);
 	for (size_t i = 0; i < lines.size(); i++)
 	{
-		line(color_im, Point(lines[i][0], lines[i][1]),
-			Point(lines[i][2], lines[i][3]), Scalar(0, 0, 255), 2, 8);
+		line(color_im, cv::Point(lines[i][0], lines[i][1]),
+			cv::Point(lines[i][2], lines[i][3]), cv::Scalar(0, 0, 255), 2, 8);
 	}
 
 	//直線の端の座標から頂点を割り出す
-	Point ten[1600];
-	Point ans[1600];
-	Point zero = 0;
+	cv::Point ten[1600];
+	cv::Point ans[1600];
+	cv::Point zero = 0;
 	for (size_t i = 0; i < lines.size(); i++) {
 		for (int j = 0; j < 4; j++) {
 			if (j % 2 == 0) {
@@ -75,7 +75,7 @@ int AnalysisGraphics() {
 	cout << "mikan" << endl;
 
 	for (int j = 0; j < i; j++) {
-		circle(color_im, Point(ten[j].x, ten[j].y), 10, Scalar(0, 255, 0), 1, 8);
+		circle(color_im, cv::Point(ten[j].x, ten[j].y), 10, cv::Scalar(0, 255, 0), 1, 8);
 	}
 
 	//頂点の割り出し
@@ -147,10 +147,10 @@ int AnalysisGraphics() {
 	//図形の再形成
 	for (int i = 0; i < anscount; i++) {
 		if (i != anscount - 1) {
-			line(img, Point(ans[i].x, ans[i].y), Point(ans[i + 1].x, ans[i + 1].y), Scalar(0, 0, 255), 3, 8);
+			line(img, cv::Point(ans[i].x, ans[i].y), cv::Point(ans[i + 1].x, ans[i + 1].y), cv::Scalar(0, 0, 255), 3, 8);
 		}
 		else {
-			line(img, Point(ans[i].x, ans[i].y), Point(ans[0].x, ans[0].y), Scalar(0, 0, 255), 3, 8);
+			line(img, cv::Point(ans[i].x, ans[i].y), cv::Point(ans[0].x, ans[0].y), cv::Scalar(0, 0, 255), 3, 8);
 		}
 	}
 
@@ -161,5 +161,5 @@ int AnalysisGraphics() {
 	imshow("はふ", color_im);
 	imshow("再生成", img);
 
-	waitKey(0);
+	cv::waitKey(0);
 }

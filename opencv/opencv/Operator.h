@@ -1,5 +1,6 @@
 ﻿#pragma once
 # include "Common.h"
+# include "GUI.h"
 
 class GUI;
 class Piece;
@@ -16,20 +17,18 @@ public:
 	//クォンストラクタ(ふざけた
 	Operator();
 
+	void exec();
+
 	//画像を読み込み
 	void read_image();
-	//頂点を求める
-	void search_vertex();
-	//辺を求める
-	void search_line();
-	//角度を求める
-	void search_angle();
 
+	//頂点・辺・角を求める
+	void init_pieces();
 
 private:
 	shared_ptr<PieceManager> piece_manager;
 	//画像が届き次第プログラムを書くと
-	shared_ptr<vector<cv::Mat> > images;
+	vector<shared_ptr<cv::Mat> > images;
 	//GUI用のクラス
 	shared_ptr<GUI> gui;
 };

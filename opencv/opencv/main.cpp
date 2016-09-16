@@ -1,10 +1,10 @@
-# include "AnalysisGraphics.h"
-# include "GUI.h"
+# include "Operator.h"
 
 
 int main(int argc, char **argv) {
-	AnalysisGraphics();
-	GUI();
+	auto ope = make_unique<Operator>();
+
+	ope->exec();
 
 	return 0;
 }

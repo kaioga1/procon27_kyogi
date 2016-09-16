@@ -1,21 +1,7 @@
 ﻿# include "AnalysisGraphics.h"
 
-//頂点を出す
-
-//辺を求める
-
-double cor_x[100] = { 0 };
-double cor_y[100] = { 0 };
-double sen[100] = { 0 };
-char no[300];
-
-
-
 
 int AnalysisGraphics() {
-	//グローバルにあった変数を移動
-
-
 	cv::Mat im = cv::imread("item/IMGP.jpg", 0);
 	cv::Mat color_im = cv::imread("item/IMGP.jpg", 1);
 	cv::Mat im_canny, im_sobel, im_laplacian;
@@ -174,7 +160,7 @@ void measureLine(int anscount, cv::Point ans[], double &root) {
 
 void measureAngle(int anscount, cv::Point ans[], double naiseki[], double angle[]){
 	//角度の割り出し
-	for (int i = 0; i < anscount; i++) {
+	/*for (int i = 0; i < anscount; i++) {
 		if (i == anscount - 1) {
 			naiseki[i] = (ans[i].x - ans[0].x);
 			angle[i] = naiseki[i] / (sen[i] * sen[0]);
@@ -186,7 +172,7 @@ void measureAngle(int anscount, cv::Point ans[], double naiseki[], double angle[
 			angle[i] = acos(angle[i]);
 			angle[i] = angle[i] * 180.0;
 		}
-	}
+	}*/
 }
 
 void remakeFigure(int anscount, cv::Mat &img, cv::Point ans[]) {

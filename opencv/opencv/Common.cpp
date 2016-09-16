@@ -46,12 +46,11 @@ void PieceManager::init_pieces(vector<shared_ptr<cv::Mat> > images){
 	for (int i = 0; i < 10/*images.size()*/; i++) {
 		//shared_ptr<cv::Mat> image = images[i];
 		//shared_ptr<cv::Mat> image = make_shared<cv::Mat>(cv::imread("item/IMGP.jpg", 0));
-		cv::Mat image = cv::imread("item/IMGP.jpg", 0);
 		//cv::Mat image = cv::imread("item/IMGP.jpg", 0);
 		//cv::line(image, cv::Point(100, 100), cv::Point(i*100, 105), cv::Scalar(0, 0, 200), 3, 4);
 		//pieces.push_back(shared_ptr<Piece>(new Piece(image)));
 		string str = "a" + (char)('1' + i);
-		cv::imshow(str, image);
+		cv::imshow(str, *images[i]);
 	}
 	cv::waitKey();
 }

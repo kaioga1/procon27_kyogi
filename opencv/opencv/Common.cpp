@@ -7,7 +7,7 @@
 	angle(angle), vertex(vertex){
 }*/
 
-Piece::Piece(cv::Mat) {
+Piece::Piece(shared_ptr<cv::Mat> image) {
 
 }
 
@@ -43,8 +43,8 @@ PieceManager::PieceManager() {
 }
 
 void PieceManager::init_pieces(vector<shared_ptr<cv::Mat> > images){
-	//pieces.get()[0];
-	for (auto &p : pieces) {
-
+	for (int i = 0; i < images.size(); i++) {
+		shared_ptr<cv::Mat> image = images[i];
+		pieces.push_back(shared_ptr<Piece>(new Piece(image)));
 	}
 }

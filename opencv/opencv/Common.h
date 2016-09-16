@@ -38,7 +38,7 @@ public:
 	//デフォルトコンストラクタはなしで！
 	/*Piece(int number_of_corner, shared_ptr<vector<double> > line_lengths,
 		shared_ptr<vector<cv::Point> > angle, shared_ptr<vector<cv::Point> > vertex);*/
-	Piece(cv::Mat);
+	Piece(shared_ptr<cv::Mat> image);
 
 	//アクセサ
 	int get_number_of_corner() const { return number_of_corner; }

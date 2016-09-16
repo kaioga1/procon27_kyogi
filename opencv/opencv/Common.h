@@ -80,7 +80,7 @@ class PieceManager {
 public:
 	//デフォルトコンストラクタはなしで！
 	//PieceManager(shared_ptr<vector<Piece> > pieces): pieces(pieces){}
-	PieceManager(){}
+	PieceManager();
 
 	//アクセサ
 	vector<shared_ptr<Piece> > get_pieces() const { return pieces; }

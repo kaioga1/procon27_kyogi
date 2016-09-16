@@ -7,7 +7,7 @@ Operator::Operator() {
 }
 
 void Operator::exec() {
-
+	init_pieces();
 }
 
 void Operator::read_image() {

@@ -151,6 +151,8 @@
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Operator.cpp" />
+    <ClCompile Include="Piece.cpp" />
+    <ClCompile Include="PieceManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -160,6 +162,8 @@
     <ClInclude Include="Common.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="Operator.h" />
+    <ClInclude Include="Piece.h" />
+    <ClInclude Include="PieceManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

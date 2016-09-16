@@ -1,5 +1,6 @@
 ﻿#pragma once
 # include "Common.h"
+# include "PieceManager.h"
 # include "GUI.h"
 
 class GUI;

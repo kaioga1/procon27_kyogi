@@ -18,13 +18,21 @@
 //渡したMatデータが透過して帰ってくる
 void transmission(cv::Mat &);
  
+//不要な白い部分をカットする
+void cut(cv::Mat &);
 
 int main(int argc, char **argv) {
 
 	cv::Mat img = cv::imread("item/zzz.jpg");
 
+	//この関数でimgの白の部分が透過される
+	//正確に言うと(255, 255, 255)の部分
 	transmission(img);
-	
+
+	cut(img);
+
+	cv::imwrite("item/new.png", img);
+
 	cv::waitKey();
 	return 0;
 }
@@ -43,5 +51,8 @@ void transmission(cv::Mat &source) {
 			}
 		}
 	}
-	cv::imwrite("item/new.png", alpha_image);
+}
+
+void cut(cv::Mat &) {
+	
 }

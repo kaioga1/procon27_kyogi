@@ -8,10 +8,11 @@
 	angle(angle), vertex(vertex){
 }*/
 
-Piece::Piece(shared_ptr<cv::Mat> image, int number) {
-		string str = "a";
-		str += (char)('1' + number);
-		imshow(str, *image);
+Piece::Piece(shared_ptr<cv::Mat> img, int number) {
+	image = img;
+	string str = "a";
+	str += (char)('1' + number);
+	imshow(str, *image);
 }
 
 void Piece::search_vertex() {

@@ -136,8 +136,17 @@ void measureVertex(int &anscount, cv::Point ten[], cv::Point ans[], int line_end
 				break;
 			}
 		}
-		if (count == line_end / 2 - 1) {
+		if (count == line_end / 2) {
 			break;
+		}
+	}
+	for (int i = 0; i < anscount; i++) {
+		for (int j = 0; j < anscount - i; j++) {
+			if (ans[i] == ans[j] && i != j) {
+				ans[j].x = 0;
+				ans[j].y = 0;
+				anscount = j;
+			}
 		}
 	}
 }

@@ -22,18 +22,34 @@ void transmission(cv::Mat &);
 void cut(cv::Mat &);
 
 int main(int argc, char **argv) {
+	int N;
+	//ピースの数を入力
+	std::cin >> N;
 
-	cv::Mat img = cv::imread("item/zzz.jpg");
+	for (int i = 0; i < N; i++) {
+		std::string str = "item/img (";
+		str += (char)(i + '1');
+		str += ").jpg";
+		cv::Mat img = cv::imread(str);
 
-	//この関数でimgの白の部分が透過される
-	//正確に言うと(255, 255, 255)の部分
+		//この関数でimgの白の部分が透過される
+		//正確に言うと(255, 255, 255)の部分
+		transmission(img);
+
+		cut(img);
+
+		std::string st = "new_item/img";
+		st += (char)(i + '1');
+		st += ".png";
+		cv::imwrite(st, img);
+	}
+
+	cv::Mat img = cv::imread("item/frame.jpg");
 	transmission(img);
-
 	cut(img);
+	cv::imwrite("new_item/frame.png", img);
 
-	cv::imwrite("item/new.png", img);
-
-	cv::waitKey();
+	//cv::waitKey();
 	return 0;
 }
 
@@ -76,7 +92,7 @@ void cut(cv::Mat &source) {
 		}
 	}
 
-	cv::Mat roi_img(alpha_image, cv::Rect(mi.x, mi.y , (ma.x - mi.x), (ma.y - mi.y)));
+	cv::Mat roi_img(alpha_image, cv::Rect(mi.x, mi.y, (ma.x - mi.x), (ma.y - mi.y)));
 	//cv::imshow("bbb", roi_img);
 	source = roi_img;
 }

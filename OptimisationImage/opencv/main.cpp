@@ -17,14 +17,9 @@
 
 int main(int argc, char **argv) {
 
-	//cv::Mat img = cv::imread("item/zzz.jpg", 0);
-	//cv::Mat color_img = cv::imread("item/zzz.jpg", 1);
-
-	cv::Mat source = cv::imread("item/img1.png");
+	cv::Mat source = cv::imread("item/zzz.jpg");
 	cv::Mat alpha_image = cv::Mat(source.size(), CV_8UC3);
 	cv::cvtColor(source, alpha_image, CV_RGB2RGBA);
-	//cv::imshow("original", source);
-	//cv::imshow("image", alpha_image);
 
 
 	for (int y = 0; y < alpha_image.rows; ++y) {
@@ -36,13 +31,9 @@ int main(int argc, char **argv) {
 			}
 		}
 	}
-	//cv::imshow("うぇ～～い", img);
-	cv::imwrite("imte/new.png", alpha_image);
+	cv::imwrite("item/new.png", alpha_image);
 
 	
-
-	//cv::imshow("うぇ～い", alpha_image);
-
 	cv::waitKey();
 	return 0;
 }

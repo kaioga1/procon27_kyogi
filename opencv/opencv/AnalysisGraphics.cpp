@@ -35,12 +35,6 @@ int AnalysisGraphics() {
 
 	Canny(im, im_canny, 50, 200);
 
-	Sobel(im, im_sobel, CV_32F, 1, 1);
-	convertScaleAbs(im_sobel, im_sobel, 1, 0);
-
-	Laplacian(im, im_laplacian, CV_32F, 3);
-	convertScaleAbs(im_laplacian, im_laplacian, 1, 0);
-
 	//確率的ハフ変換による線分の検出＆描画
 	vector<cv::Vec4i> lines;
 
@@ -239,6 +233,15 @@ void measureAngle(int anscount, cv::Point ans[], double naiseki[], double angle[
 			}
 		}
 		cout << endl;
+	}
+	for (int i = 0; i < anscount; i++) {
+		static double data = angle[0];
+		if (i == anscount - 1) {
+			angle[i] = data;
+		}
+		else {
+			angle[i] = angle[i + 1];
+		}
 	}
 }
 

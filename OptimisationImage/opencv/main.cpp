@@ -15,13 +15,25 @@
 # include <vector>
 # include <memory>
 
+//渡したMatデータが透過して帰ってくる
+void transmission(cv::Mat &);
+ 
+
 int main(int argc, char **argv) {
 
-	cv::Mat source = cv::imread("item/zzz.jpg");
+	cv::Mat img = cv::imread("item/zzz.jpg");
+
+	transmission(img);
+	
+	cv::waitKey();
+	return 0;
+}
+
+void transmission(cv::Mat &source) {
 	cv::Mat alpha_image = cv::Mat(source.size(), CV_8UC3);
 	cv::cvtColor(source, alpha_image, CV_RGB2RGBA);
 
-
+	//透過処理
 	for (int y = 0; y < alpha_image.rows; ++y) {
 		for (int x = 0; x < alpha_image.cols; ++x) {
 			cv::Vec4b px = alpha_image.at<cv::Vec4b>(y, x);
@@ -32,8 +44,4 @@ int main(int argc, char **argv) {
 		}
 	}
 	cv::imwrite("item/new.png", alpha_image);
-
-	
-	cv::waitKey();
-	return 0;
 }

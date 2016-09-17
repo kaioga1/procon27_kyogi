@@ -1,0 +1,26 @@
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <iostream>
+#include <time.h>
+#define N 4
+
+using namespace cv;
+using namespace std;
+
+int main(int argc, char *argv[]) {
+	int i, p[N] = { 200,200,400,400 }, m[4] = {200,400,400,200};
+	Mat img = Mat::zeros(800, 900, CV_8UC3);
+
+	for (i = 0; i < N; i++) {
+		if (i < N - 1) {
+			line(img, Point(p[i], m[i]), Point(p[i + 1], m[i + 1]), Scalar(255, 0, 0), 3, 8);
+		}
+		else{
+			line(img, Point(p[i], m[i]), Point(p[0], m[0]), Scalar(255, 0, 0), 3, 8);
+		}
+	}
+	namedWindow("drawing", CV_WINDOW_AUTOSIZE | CV_WINDOW_FREERATIO);
+	imshow("drawing", img);
+	waitKey(0);
+}

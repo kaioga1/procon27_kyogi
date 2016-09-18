@@ -12,7 +12,8 @@ Piece::Piece(shared_ptr<cv::Mat> img, int number) {
 	image = img;
 	string str = "a";
 	str += (char)('1' + number);
-	imshow(str, *image);
+	//imshow(str, *image);
+	adr = cv::Point(0, 0);
 }
 
 void Piece::search_vertex() {

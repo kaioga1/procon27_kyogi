@@ -38,6 +38,10 @@ public:
 	//角度を求める
 	void search_angle();
 
+	//GUI用
+	cv::Point adr;
+	//画像ドゥエータ(データ)
+	shared_ptr<cv::Mat> image;
 private:
 	//何番目のピースか
 	int number;
@@ -50,9 +54,5 @@ private:
 	//頂点
 	vector<shared_ptr<cv::Point> > vertex;
 
-	//画像ドゥエータ(データ)
-	shared_ptr<cv::Mat> image;
-
-	//GUI用
 
 };

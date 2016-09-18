@@ -30,6 +30,8 @@ private:
 	shared_ptr<PieceManager> piece_manager;
 	//画像が届き次第プログラムを書くと
 	vector<shared_ptr<cv::Mat> > images;
+	//枠
+	shared_ptr<cv::Mat> frame;
 	//GUI用のクラス
 	shared_ptr<GUI> gui;
 };

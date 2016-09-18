@@ -38,10 +38,12 @@ public:
 	//角度を求める
 	void search_angle();
 
-	//GUI用
+	/*----GUI用----*/
 	cv::Point adr;
 	//画像ドゥエータ(データ)
 	shared_ptr<cv::Mat> image;
+	bool flag;
+	/*-------------*/
 private:
 	//何番目のピースか
 	int number;

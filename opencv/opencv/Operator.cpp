@@ -10,7 +10,7 @@ void Operator::exec() {
 	read_image();
 	init_pieces();
 
-	//GUI
+	//GUI(計算結果の表示にも使える)
 	gui->draw(piece_manager->get_pieces(), frame);
 }
 

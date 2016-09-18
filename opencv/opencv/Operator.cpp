@@ -9,9 +9,9 @@ Operator::Operator() {
 void Operator::exec() {
 	read_image();
 	init_pieces();
-	//while (1) {
-		gui->draw(piece_manager->get_pieces(), frame);
-	//}
+
+	//GUI
+	gui->draw(piece_manager->get_pieces(), frame);
 }
 
 void Operator::read_image() {

@@ -8,6 +8,6 @@ PieceManager::PieceManager() {
 
 void PieceManager::init_pieces(vector<shared_ptr<cv::Mat> > images){
 	for (int i = 0; i < images.size(); i++) {
-		pieces.push_back(shared_ptr<Piece>(new Piece(images[i], i)));
+		pieces.push_back(make_shared<Piece>(Piece(images[i], i)));
 	}
 }

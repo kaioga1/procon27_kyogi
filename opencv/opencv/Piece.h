@@ -22,7 +22,7 @@ public:
 	//アクセサ
 	int get_number_of_corner() const { return number_of_corner; }
 	vector<shared_ptr<double> > get_line_lengths() const { return line_lengths; }
-	vector<shared_ptr<cv::Point> > get_angle() const { return angle; }
+	vector<shared_ptr<double> > get_angle() const { return angle; }
 	vector<shared_ptr<cv::Point> > get_vertex() const { return vertex; }
 	//必要そうなのでseter
 	/*void get_number_of_corner(int num ) { number_of_corner = num; }
@@ -38,6 +38,12 @@ public:
 	//角度を求める
 	void search_angle();
 
+	/*----GUI用----*/
+	cv::Point adr;
+	//画像ドゥエータ(データ)
+	shared_ptr<cv::Mat> image;
+	bool flag;
+	/*-------------*/
 private:
 	//何番目のピースか
 	int number;
@@ -46,13 +52,8 @@ private:
 	//辺の長さ(r)
 	vector<shared_ptr<double> > line_lengths;
 	//角度(θ)
-	vector<shared_ptr<cv::Point> > angle;
+	vector<shared_ptr<double> > angle;
 	//頂点
 	vector<shared_ptr<cv::Point> > vertex;
-
-	//画像ドゥエータ(データ)
-	shared_ptr<cv::Mat> image;
-
-	//GUI用
 
 };

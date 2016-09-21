@@ -28,41 +28,47 @@ int main() {
 	cv::Mat im_canny, im_sobel, im_laplacian;
 	cv::Mat img = cv::Mat::zeros(600, 600, CV_8UC3);*/
 
-	int number = 0;
-	cv::Mat piece[50];
-	cout << "ピースの数を入力" << endl;
-	cin >> number;
-	string imgplece;
-	string imgname;
-	for (int i = 0; i < number; i++) {
-		imgplece = "item/piece";
-		imgplece += " (";
-		imgplece += (char)('1' + i);
-		imgplece += ").png";
-		imgname = "piece";
-		imgname += (char)('1' + i);
-		piece[i] = cv::imread(imgplece,-1);
-		if (!piece[i].data) {
-			return -1;
-		}
-		imshow(imgname, piece[i]);
-		counter = i;
-		cvSetMouseCallback(imgname.c_str(), Input);
-		cout << endl;
-		anscount = 0;
-
-		cvWaitKey(0);
-		cvDestroyWindow(imgname.c_str());
-	}
 	int j = 0, k = 0, z = 0;
 	double root = 0;
 	int line_end = 0;
 	double naiseki[50];
 	double naiseki_x[50];
 	double naiseki_y[50];
-	double sen[50];
-	double angle[32];
+	double sen[32][50];
+	double angle[32][50];
 	double pie = 3.141592;
+
+	int number = 0;
+	cv::Mat piece[50];
+	cout << "ピースの数を入力" << endl;
+	cin >> number;
+	string imgplece;
+	string imgname;
+	//Number of piece の略
+	for (int nop = 0; nop < number; nop++) {
+		imgplece = "item/piece";
+		imgplece += " (";
+		imgplece += (char)('1' + nop);
+		imgplece += ").png";
+		imgname = "piece";
+		imgname += (char)('1' + nop);
+		piece[nop] = cv::imread(imgplece,-1);
+		if (!piece[nop].data) {
+			return -1;
+		}
+		imshow(imgname, piece[nop]);
+		counter = nop;
+		cvSetMouseCallback(imgname.c_str(), Input);
+		cout << endl;
+		anscount = 0;
+
+		cvWaitKey(0);
+		cvDestroyWindow(imgname.c_str());
+
+		measureLine(anscount, vertex, root, sen, nop);
+
+		measureAngle(anscount, vertex, naiseki, angle, sen, pie, nop);
+	}
 
 	int line_size;
 	/*for (int i = 0; i < number; i++) {
@@ -73,27 +79,33 @@ int main() {
 
 		cvWaitKey(0);
 	}*/
-	/*measureVertex(anscount, ten, ans, line_end);
+	//measureVertex(anscount, ten, ans, line_end);
 
 	//新しく割り出した頂点の出力
-	for (int i = 0; i < anscount; i++) {
+	/*for (int i = 0; i < anscount; i++) {
 		cout << ans[i] << endl;
 	}*/
 
 
-	/*measureLine(anscount, vertex, root, sen);
+	//measureLine(anscount, vertex, root, sen);
 
 
 
-	measureAngle(anscount, vertex, naiseki, angle, naiseki_x, naiseki_y, sen, pie);
+	//measureAngle(anscount, vertex, naiseki, angle, naiseki_x, naiseki_y, sen, pie);
 
 
 
-	remakeFigure(anscount, img, vertex);
+	//remakeFigure(anscount, img, vertex);
 
-	imshow("original", im);
-	imshow("はふ", color_im);
-	imshow("再生成", img);*/
+	//imshow("original", im);
+	//imshow("はふ", color_im);
+	//imshow("再生成", img);
+
+	for (int i = 0; i < number; i++) {
+		imgname = "piece";
+		imgname += (char)('1' + i);
+		imshow(imgname, piece[i]);
+	}
 
 	cout << "end" << endl;
 	cv::waitKey(0);
@@ -141,51 +153,45 @@ void measureVertex(int &anscount, cv::Point ten[], cv::Point ans[], int line_end
 }
 
 //頂点から辺の割り出し
-void measureLine(int anscount, cv::Point vertex[], double &root, double sen[]) {
+void measureLine(int anscount, cv::Point vertex[][50], double &root, double sen[][50], int nop) {
 	for (int i = 0; i < anscount; i++) {
 		if (i == anscount - 1) {
-			root = (vertex[i].x - vertex[0].x)*(vertex[i].x - vertex[0].x) + (vertex[i].y - vertex[0].y)*(vertex[i].y - vertex[0].y);
-			sen[i] = sqrt(root);
+			root = (vertex[i][nop].x - vertex[0][nop].x)*(vertex[i][nop].x - vertex[0][nop].x) + (vertex[i][nop].y - vertex[0][nop].y)*(vertex[i][nop].y - vertex[0][nop].y);
+			sen[i][nop] = sqrt(root);
 		}
 		else {
-			root = (vertex[i].x - vertex[i + 1].x)*(vertex[i].x - vertex[i + 1].x) + (vertex[i].y - vertex[i + 1].y)*(vertex[i].y - vertex[i + 1].y);
-			sen[i] = sqrt(root);
+			root = (vertex[i][nop].x - vertex[i + 1][nop].x)*(vertex[i][nop].x - vertex[i + 1][nop].x) + (vertex[i][nop].y - vertex[i + 1][nop].y)*(vertex[i][nop].y - vertex[i + 1][nop].y);
+			sen[i][nop] = sqrt(root);
 		}
 	}
 	//辺の出力
 	for (int i = 0; i < anscount; i++) {
-		cout << sen[i] << endl;
+		cout << sen[i][nop] << endl;
 	}
 }
 
 
-void measureAngle(int anscount, cv::Point vertex[], double naiseki[], double angle[], double naiseki_x[], double naiseki_y[], double sen[], double pie) {
+void measureAngle(int anscount, cv::Point vertex[][50], double naiseki[], double angle[][50], double sen[][50], double pie, int nop) {
 	double sum = 0;
 	int binary[50] = { 0 };
 	for (int i = 0; i < anscount; i++) {
 		if (i == anscount - 1) {
-			naiseki_x[i] = (vertex[0].x - vertex[i].x) * (vertex[0].x - vertex[1].x);
-			naiseki_y[i] = (vertex[0].y - vertex[i].y) * (vertex[0].y - vertex[1].y);
-			naiseki[i] = naiseki_x[i] + naiseki_y[i];
-			angle[i] = naiseki[i] / (sen[i] * sen[0]);
-			angle[i] = acos(angle[i]);
-			angle[i] = angle[i] * 180.0 / pie;
+			naiseki[i] = (vertex[0][nop].x - vertex[i][nop].x) * (vertex[0][nop].x - vertex[1][nop].x) + (vertex[0][nop].y - vertex[i][nop].y) * (vertex[0][nop].y - vertex[1][nop].y);
+			angle[i][nop] = naiseki[i] / (sen[i][nop] * sen[0][nop]);
+			angle[i][nop] = acos(angle[i][nop]);
+			angle[i][nop] = angle[i][nop] * 180.0 / pie;
 		}
 		else if (i == anscount - 2) {
-			naiseki_x[i] = (vertex[i + 1].x - vertex[i].x) * (vertex[i + 1].x - vertex[0].x);
-			naiseki_y[i] = (vertex[i + 1].y - vertex[i].y) * (vertex[i + 1].y - vertex[0].y);
-			naiseki[i] = naiseki_x[i] + naiseki_y[i];
-			angle[i] = naiseki[i] / (sen[i] * sen[i + 1]);
-			angle[i] = acos(angle[i]);
-			angle[i] = angle[i] * 180.0 / pie;
+			naiseki[i] = (vertex[i + 1][nop].x - vertex[i][nop].x) * (vertex[i + 1][nop].x - vertex[0][nop].x) + (vertex[i + 1][nop].y - vertex[i][nop].y) * (vertex[i + 1][nop].y - vertex[0][nop].y);
+			angle[i][nop] = naiseki[i] / (sen[i][nop] * sen[i + 1][nop]);
+			angle[i][nop] = acos(angle[i][nop]);
+			angle[i][nop] = angle[i][nop] * 180.0 / pie;
 		}
 		else {
-			naiseki_x[i] = (vertex[i + 1].x - vertex[i].x) * (vertex[i + 1].x - vertex[i + 2].x);
-			naiseki_y[i] = (vertex[i + 1].y - vertex[i].y) * (vertex[i + 1].y - vertex[i + 2].y);
-			naiseki[i] = naiseki_x[i] + naiseki_y[i];
-			angle[i] = naiseki[i] / (sen[i] * sen[i + 1]);
-			angle[i] = acos(angle[i]);
-			angle[i] = angle[i] * 180.0 / pie;
+			naiseki[i] = (vertex[i + 1][nop].x - vertex[i][nop].x) * (vertex[i + 1][nop].x - vertex[i + 2][nop].x) + (vertex[i + 1][nop].y - vertex[i][nop].y) * (vertex[i + 1][nop].y - vertex[i + 2][nop].y);
+			angle[i][nop] = naiseki[i] / (sen[i][nop] * sen[i + 1][nop]);
+			angle[i][nop] = acos(angle[i][nop]);
+			angle[i][nop] = angle[i][nop] * 180.0 / pie;
 		}
 	}
 	cout << endl;
@@ -212,13 +218,13 @@ void measureAngle(int anscount, cv::Point vertex[], double naiseki[], double ang
 		//反転させる処理
 		for (int j = 0; j < anscount; j++) {
 			if (binary[j] == 1) {
-				angle[j] = 360 - angle[j];
+				angle[j][nop] = 360 - angle[j][nop];
 			}
 		}
 		//反転したものをたしあわせる
 		sum = 0;
 		for (int j = 0; j < anscount; j++) {
-			sum = sum + angle[j];
+			sum = sum + angle[j][nop];
 		}
 		//反転してそれがあっているか確認する処理。誤差は+-3°。
 		if ((anscount - 2) * 180 < sum + 3 && (anscount + 2) * 180 > sum + 3) {
@@ -228,23 +234,23 @@ void measureAngle(int anscount, cv::Point vertex[], double naiseki[], double ang
 		//違ったとき反転したものを元に戻す
 		for (int j = 0; j < anscount; j++) {
 			if (binary[j] == 1) {
-				angle[j] = 360 - angle[j];
+				angle[j][nop] = 360 - angle[j][nop];
 			}
 		}
 		cout << endl;
 	}
-	for (int i = 0; i < anscount; i++) {
-		static double data = angle[0];
-		if (i == anscount - 1) {
-			angle[i] = data;
+	for (int i = anscount - 2; i >= 0; i--) {
+		static double data = angle[anscount - 1][nop];
+		if (i == 0) {
+			angle[i][nop] = data;
 		}
 		else {
-			angle[i] = angle[i + 1];
+			angle[i + 1][nop] = angle[i][nop];
 		}
 	}
 	//角度の出力
 	for (int i = 0; i < anscount; i++) {
-		cout << angle[i] << endl;
+		cout << angle[i][nop] << endl;
 	}
 }
 

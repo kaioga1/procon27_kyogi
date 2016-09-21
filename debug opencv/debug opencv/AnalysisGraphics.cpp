@@ -2,21 +2,60 @@
 
 void Input(int event, int x, int y, int flag, void *param = NULL);
 	int anscount = 0;
-	cv::Point vertex[32];
+	int counter = 0;
+	cv::Point vertex[32][50];
 int main() {
-	//グローバルにあった変数を移動
+	/*int i = 2;
+	string hoge = "item/";
+	hoge += "frame";
+	hoge += ".png";
+	//hoge += "(";
+	//hoge += (char)('0' + i);
+	//hoge += ")";
+	cout << hoge << endl;
 
 
-	cv::Mat im = cv::imread("item/piece (1).png", 0);
+
+	cv::Mat im = cv::imread(hoge, 1);
+	if (!im.data) {
+		return -1;
+	}
+	imshow("てすと", im);
+
+
+	/*cv::Mat im = cv::imread("item/piece (1).png", 0);
 	cv::Mat color_im = cv::imread("item/piece (1).png", 1);
 	cv::Mat im_canny, im_sobel, im_laplacian;
-	cv::Mat img = cv::Mat::zeros(600, 600, CV_8UC3);
+	cv::Mat img = cv::Mat::zeros(600, 600, CV_8UC3);*/
 
+	int number = 0;
+	cv::Mat piece[50];
+	cout << "ピースの数を入力" << endl;
+	cin >> number;
+	string imgplece;
+	string imgname;
+	for (int i = 0; i < number; i++) {
+		imgplece = "item/piece";
+		imgplece += " (";
+		imgplece += (char)('1' + i);
+		imgplece += ").png";
+		imgname = "piece";
+		imgname += (char)('1' + i);
+		piece[i] = cv::imread(imgplece,-1);
+		if (!piece[i].data) {
+			return -1;
+		}
+		imshow(imgname, piece[i]);
+		counter = i;
+		cvSetMouseCallback(imgname.c_str(), Input);
+		cout << endl;
+		anscount = 0;
 
-
+		cvWaitKey(0);
+		cvDestroyWindow(imgname.c_str());
+	}
 	int j = 0, k = 0, z = 0;
 	double root = 0;
-	int hoge = 0;
 	int line_end = 0;
 	double naiseki[50];
 	double naiseki_x[50];
@@ -25,25 +64,15 @@ int main() {
 	double angle[32];
 	double pie = 3.141592;
 
-
-
 	int line_size;
+	/*for (int i = 0; i < number; i++) {
+		counter = i;
+		imgname = "piece";
+		imgname += (char)('1' + i);
+		cvSetMouseCallback(imgname.c_str(), Input);
 
-	//頂点や角、辺の数
-
-
-
-	if (!im.data) {
-		return -1;
-	}
-
-	Canny(im, im_canny, 50, 200);
-
-	imshow("test", im);
-
-	cvSetMouseCallback("test", Input);
-
-	cvWaitKey(0);
+		cvWaitKey(0);
+	}*/
 	/*measureVertex(anscount, ten, ans, line_end);
 
 	//新しく割り出した頂点の出力
@@ -52,27 +81,21 @@ int main() {
 	}*/
 
 
-	measureLine(anscount, vertex, root, sen);
+	/*measureLine(anscount, vertex, root, sen);
 
-	//辺の出力
-	for (int i = 0; i < anscount; i++) {
-		cout << sen[i] << endl;
-	}
+
 
 	measureAngle(anscount, vertex, naiseki, angle, naiseki_x, naiseki_y, sen, pie);
 
-	//角度の出力
-	for (int i = 0; i < anscount; i++) {
-		cout << angle[i] << endl;
-	}
+
 
 	remakeFigure(anscount, img, vertex);
 
 	imshow("original", im);
-	imshow("canny", im_canny);
 	imshow("はふ", color_im);
-	imshow("再生成", img);
+	imshow("再生成", img);*/
 
+	cout << "end" << endl;
 	cv::waitKey(0);
 
 }
@@ -128,6 +151,10 @@ void measureLine(int anscount, cv::Point vertex[], double &root, double sen[]) {
 			root = (vertex[i].x - vertex[i + 1].x)*(vertex[i].x - vertex[i + 1].x) + (vertex[i].y - vertex[i + 1].y)*(vertex[i].y - vertex[i + 1].y);
 			sen[i] = sqrt(root);
 		}
+	}
+	//辺の出力
+	for (int i = 0; i < anscount; i++) {
+		cout << sen[i] << endl;
 	}
 }
 
@@ -215,16 +242,21 @@ void measureAngle(int anscount, cv::Point vertex[], double naiseki[], double ang
 			angle[i] = angle[i + 1];
 		}
 	}
+	//角度の出力
+	for (int i = 0; i < anscount; i++) {
+		cout << angle[i] << endl;
+	}
 }
 
 //入力を数値として代入する、表示する
 void Input(int event, int x, int y, int flags, void *param){
 	switch (event) {
 	case CV_EVENT_LBUTTONDOWN:
-		vertex[anscount].x = x;
-		vertex[anscount].y = y;
-		cout << vertex[anscount] << endl;
+		vertex[anscount][counter].x = x;
+		vertex[anscount][counter].y = y;
+		cout << vertex[anscount][counter] << ",";
 		anscount++;
+		cout << anscount << endl;
 		break;
 	case CV_EVENT_RBUTTONDOWN:
 		anscount--;

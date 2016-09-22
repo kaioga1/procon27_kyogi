@@ -14,13 +14,12 @@ Piece::Piece(shared_ptr<cv::Mat> img, int num) {
 	flag = false;
 	string str = "a";
 	str += (char)('1' + num);
-	
+
 	//２値化
 	threshold(*image, *image, 100, 255, CV_THRESH_BINARY);
 
 	cv::imwrite("new_item/" + to_string(num + 1) + ".png", *image);
 
-	imshow(str, *image);
 	search_vertex();
 	imshow(str, *image);
 
@@ -43,23 +42,47 @@ void Piece::search_vertex() {
 	cv::Mat src = *image;
 	cv::Mat dst = cv::Mat::zeros(src.rows, src.cols, CV_8UC3);
 
-	src = src > 1;
-	cv::namedWindow("Source", 1);
-	imshow("Source", src);
-
 	vector<vector<cv::Point> > contours;
 	vector<cv::Vec4i> hierarchy;
 	findContours(src, contours, hierarchy,
 		CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
 
+	for (int i = 0; i < contours.size(); i++) {
+		if (contours[i][0].x == 1 || contours[i][0].y == 1) { 
+			/*
+			外線がなぜが枠とされていたので, 省く
+			*/
+			auto itr = contours[i].begin();
+			while (itr != contours[i].end()) {
+				itr = contours[i].erase(itr);
+			}
+			continue; 
+		}
+		else {
+			//必要なのは始点と終点だけなのでその他の途中のデータは消去
+			auto itr = contours[i].begin();
+			while (itr + 1 != contours[i].end()) {
+				if (itr != contours[i].begin()) {
+					itr = contours[i].erase(itr);
+				}
+				else {
+					itr++;
+				}
+			}
+		}
+		for (int j = 0; j < contours[i].size(); j++) {
+			cout << contours[i][j] << " ";
+		}
+		cout << endl;
+	}
+	//cv::waitKey();
+
 	// トップレベルにあるすべての輪郭を横断し，
 	// 各連結成分をランダムな色で描きます．
 	int idx = 0;
-	for (; idx >= 0; idx = hierarchy[idx][0])
-	{
-		cv:: Scalar color(rand() & 255, rand() & 255, rand() & 255);
-		drawContours(dst, contours, idx, color, 1/*CV_FILLED*/, 8, hierarchy);
-	}
+
+	cv::Scalar color(rand() & 255, rand() & 255, rand() & 255);
+	drawContours(dst, contours, idx, color, 1/*CV_FILLED*/, 8, hierarchy);
 	*image = dst;
 
 	/*for (size_t i = 0; i < contours.size(); i++)
@@ -85,7 +108,7 @@ void Piece::search_vertex() {
 	cv::Mat im_canny;
 
 	cv::Point ten[50];
-	
+
 	cv::Point zero = 0;
 
 	int a = 0, b = 0;
@@ -93,7 +116,7 @@ void Piece::search_vertex() {
 	int standard = 0;
 	int count = 0;
 	int counter = 0;
-	
+
 	Canny(*image, im_canny, 50, 200);
 
 	vector<cv::Vec4i> lines;

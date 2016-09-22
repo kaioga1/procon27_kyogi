@@ -15,6 +15,7 @@
 # include <queue>
 # include <vector>
 # include <memory>
+# include <numeric>
 
 /*
 どれがopencvの関数なのかわからなくなるので, 

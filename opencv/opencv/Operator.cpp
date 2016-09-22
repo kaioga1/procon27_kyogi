@@ -22,10 +22,10 @@ void Operator::read_image() {
 		//string str = "new_item/img";
 		string str = "item/img (";
 		str += to_string(i);
-		str += ").jpg";
+		str += ").png";
 		images.push_back(make_shared<cv::Mat> (cv::imread(str, 0)));
 	}
-	frame = make_shared<cv::Mat>(cv::imread("new_item/frame.png", 0));
+	frame = make_shared<cv::Mat>(cv::imread("item/frame.png", 0));
 	cv::imshow("aaa", *frame);
 }
 

@@ -13,9 +13,14 @@ Piece::Piece(shared_ptr<cv::Mat> img, int number) {
 	flag = false;
 	string str = "a";
 	str += (char)('1' + number);
+	
+	//２値化
+	threshold(*image, *image, 100, 255, CV_THRESH_BINARY);
 
 	imshow(str, *image);
 	search_vertex();
+	imshow(str, *image);
+
 	//search_line();
 	//search_angle();
 	cout << endl;

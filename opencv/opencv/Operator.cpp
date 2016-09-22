@@ -18,14 +18,16 @@ void Operator::read_image() {
 	//読み込んだ画像はimagesにpushしていく
 	//images->push_back(ほげほげ);
 	//ここぐらいはやってもらわないとこまる割合的に
-	for (int i = 1; i <= 1; i++) {
+	for (int i = 1; i <= 7; i++) {
 		//string str = "new_item/img";
 		string str = "item/img (";
 		str += to_string(i);
 		str += ").png";
 		images.push_back(make_shared<cv::Mat> (cv::imread(str, 0)));
 	}
+	//枠の読み込み
 	frame = make_shared<cv::Mat>(cv::imread("item/frame.png", 0));
+	threshold(*frame, *frame, 100, 255, CV_THRESH_BINARY);
 	cv::imshow("aaa", *frame);
 }
 

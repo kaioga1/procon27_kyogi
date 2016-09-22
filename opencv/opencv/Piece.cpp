@@ -17,6 +17,8 @@ Piece::Piece(shared_ptr<cv::Mat> img, int number) {
 	//２値化
 	threshold(*image, *image, 100, 255, CV_THRESH_BINARY);
 
+	cv::imwrite("new_item/" + to_string(number + 1) + ".png", *image);
+
 	imshow(str, *image);
 	search_vertex();
 	imshow(str, *image);
@@ -30,14 +32,36 @@ Piece::Piece(shared_ptr<cv::Mat> img, int number) {
 
 void Piece::search_vertex() {
 	//srcは入力画像をMatに変換したものを渡すこととする
-	vector<vector<cv::Point>> squares;
+	/*vector<vector<cv::Point>> squares;
 	vector<vector<cv::Point> > contours;// 輪郭情報
 	vector<vector<cv::Point> > poly;// ボリゴン情報
 
 											// 輪郭抽出
 	cv::findContours(*image, contours, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
+	*/
+	cv::Mat src = *image;
+	cv::Mat dst = cv::Mat::zeros(src.rows, src.cols, CV_8UC3);
 
-	for (size_t i = 0; i < contours.size(); i++)
+	src = src > 1;
+	cv::namedWindow("Source", 1);
+	imshow("Source", src);
+
+	vector<vector<cv::Point> > contours;
+	vector<cv::Vec4i> hierarchy;
+	findContours(src, contours, hierarchy,
+		CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
+
+	// トップレベルにあるすべての輪郭を横断し，
+	// 各連結成分をランダムな色で描きます．
+	int idx = 0;
+	for (; idx >= 0; idx = hierarchy[idx][0])
+	{
+		cv:: Scalar color(rand() & 255, rand() & 255, rand() & 255);
+		drawContours(dst, contours, idx, color, 1/*CV_FILLED*/, 8, hierarchy);
+	}
+	*image = dst;
+
+	/*for (size_t i = 0; i < contours.size(); i++)
 	{
 		cv::Mat contour = cv::Mat(contours[i]);
 
@@ -48,13 +72,10 @@ void Piece::search_vertex() {
 		// 輪郭・ポリライン近似 epsilonはarcLengthに対する割合で指定する
 		cv::approxPolyDP(approx, approx, 0.01 * cv::arcLength(contour, true), true);
 
-		if (approx.size() == 5) //ここでは頂点数4、つまり四辺形の頂点集合だけを対象にしている
-		{
-			//destは出力先のMat
-			cv::drawContours(*image, contours, i, CV_RGB(0, 0, 255), 4);
-			//ベクタに格納
-			squares.push_back(approx);
-		}
+		//destは出力先のMat
+		cv::drawContours(*image, contours, i, CV_RGB(0, 0, 255), 4);
+		//ベクタに格納
+		squares.push_back(approx);
 	}
 	/*
 	//読み込んだ画像を元に頂点を求める

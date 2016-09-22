@@ -5,6 +5,7 @@
 
 class GUI;
 class Piece;
+class Frame;
 
 /*
 全体を操作するクラス
@@ -31,7 +32,7 @@ private:
 	//画像が届き次第プログラムを書くと
 	vector<shared_ptr<cv::Mat> > images;
 	//枠
-	shared_ptr<cv::Mat> frame;
+	shared_ptr<Frame> frame;
 	//GUI用のクラス
 	shared_ptr<GUI> gui;
 };

@@ -47,7 +47,7 @@ void my_mouse_callback(int event, int x, int y, int flags, void* param) {
 	}
 }
 
-void GUI::draw(vector<shared_ptr<Piece> > pie, shared_ptr<cv::Mat> frame) {
+void GUI::draw(vector<shared_ptr<Piece> > pie, shared_ptr<Frame> frame) {
 	pieces = pie;
 	//前景画像の変形行列
 
@@ -66,8 +66,9 @@ void GUI::draw(vector<shared_ptr<Piece> > pie, shared_ptr<cv::Mat> frame) {
 		img.copyTo(temp);
 
 		//																								平行移動の量
+		shared_ptr<cv::Mat> f = frame->image;
 		cv::Mat mat = (cv::Mat_<double>(2, 3) << 1.0, 0.0, 100, 0.0, 1.0, 100);
-		cv::warpAffine(*frame, temp, mat, temp.size(), CV_INTER_LINEAR, cv::BORDER_TRANSPARENT);
+		cv::warpAffine(*f, temp, mat, temp.size(), CV_INTER_LINEAR, cv::BORDER_TRANSPARENT);
 		
 		for (int i = 0; i < pieces.size(); i++) {
 			shared_ptr<cv::Mat> p = pieces[i]->image;

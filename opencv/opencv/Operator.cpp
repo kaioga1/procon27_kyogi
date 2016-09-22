@@ -25,10 +25,9 @@ void Operator::read_image() {
 		str += ").png";
 		images.push_back(make_shared<cv::Mat> (cv::imread(str, 0)));
 	}
+
 	//枠の読み込み
-	frame = make_shared<cv::Mat>(cv::imread("item/frame.png", 0));
-	threshold(*frame, *frame, 100, 255, CV_THRESH_BINARY);
-	cv::imshow("aaa", *frame);
+	frame = make_shared<Frame>(make_shared<cv::Mat> (cv::imread("item/frame.png", 0)), 0);
 }
 
 void Operator::init_pieces() {

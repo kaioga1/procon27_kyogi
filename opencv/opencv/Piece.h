@@ -17,7 +17,7 @@ public:
 	//デフォルトコンストラクタはなしで！
 	/*Piece(int number_of_corner, shared_ptr<vector<double> > line_lengths,
 		shared_ptr<vector<cv::Point> > angle, shared_ptr<vector<cv::Point> > vertex);*/
-	Piece(shared_ptr<cv::Mat> img, int number);
+	Piece(shared_ptr<cv::Mat> img, int num);
 
 	//アクセサ
 	int get_number_of_corner() const { return number_of_corner; }
@@ -45,8 +45,8 @@ public:
 	bool flag;
 	/*-------------*/
 private:
-	//何番目のピースか
-	int number;
+	//実物のピースと対応させる。くっつけていくと複数になるのでvectorに変更
+	vector<int> number;
 	//何角形か
 	int number_of_corner;
 	//辺の長さ(r)

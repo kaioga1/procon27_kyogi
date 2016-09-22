@@ -8,16 +8,17 @@
 	angle(angle), vertex(vertex){
 }*/
 
-Piece::Piece(shared_ptr<cv::Mat> img, int number) {
+Piece::Piece(shared_ptr<cv::Mat> img, int num) {
 	image = img;
+	number.push_back(num);
 	flag = false;
 	string str = "a";
-	str += (char)('1' + number);
+	str += (char)('1' + num);
 	
 	//２値化
 	threshold(*image, *image, 100, 255, CV_THRESH_BINARY);
 
-	cv::imwrite("new_item/" + to_string(number + 1) + ".png", *image);
+	cv::imwrite("new_item/" + to_string(num + 1) + ".png", *image);
 
 	imshow(str, *image);
 	search_vertex();

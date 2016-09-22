@@ -1,6 +1,6 @@
-# include "GUI.h"
+ï»¿# include "GUI.h"
 
-// ƒOƒ[ƒoƒ‹•Ï”
+// ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°
 bool moving = false;
 cv::Point mouse;
 vector<shared_ptr<Piece> > pieces;
@@ -10,14 +10,14 @@ GUI::GUI() {
 	img = cv::Mat(cv::Size(960, 540), CV_8UC3, cv::Scalar(100, 100, 100));
 }
 
-// ƒR[ƒ‹ƒoƒbƒNŠÖ”
+// ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯é–¢æ•°
 void my_mouse_callback(int event, int x, int y, int flags, void* param) {
 	cv::Mat* image = static_cast<cv::Mat*>(param);
 
 	switch (event) {
 	case cv::EVENT_MOUSEMOVE:
 		if (moving) {
-			//Mouse‚ÌˆÊ’u‚ğ‚ğƒs[ƒX‚É‘ã“ü
+			//Mouseã®ä½ç½®ã‚’ã‚’ãƒ”ãƒ¼ã‚¹ã«ä»£å…¥
 			piece->adr.x = x;
 			piece->adr.y = y;
 		}
@@ -26,16 +26,16 @@ void my_mouse_callback(int event, int x, int y, int flags, void* param) {
 	case cv::EVENT_LBUTTONDOWN:
 		moving = true;
 		for (int i = 0; i < pieces.size(); i++) {
-			//Piece‚Ì‰æ‘œƒf[ƒ^‚ğæ“¾
+			//Pieceã®ç”»åƒãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—
 			shared_ptr<cv::Mat> image = pieces[i]->image;
-			//Piece‚ÌˆÊ’u‚ğæ“¾
+			//Pieceã®ä½ç½®ã‚’å–å¾—
 			cv::Point adr = pieces[i]->adr;
-			//ƒNƒŠƒbƒN‚µ‚½”ÍˆÍ“à‚É‚ ‚é‚©”»’è
+			//ã‚¯ãƒªãƒƒã‚¯ã—ãŸç¯„å›²å†…ã«ã‚ã‚‹ã‹åˆ¤å®š
 			if (x > adr.x && y > adr.y && x < adr.x + image->size().width && y < adr.y + image->size().height) {
 				piece = pieces[i];
 				break;
 			}
-			//‚È‚¯‚ê‚Îfalse
+			//ãªã‘ã‚Œã°false
 			if (i == pieces.size() - 1)	moving = false;
 		}
 		break;
@@ -49,23 +49,23 @@ void my_mouse_callback(int event, int x, int y, int flags, void* param) {
 
 void GUI::draw(vector<shared_ptr<Piece> > pie, shared_ptr<cv::Mat> frame) {
 	pieces = pie;
-	//‘OŒi‰æ‘œ‚Ì•ÏŒ`s—ñ
+	//å‰æ™¯ç”»åƒã®å¤‰å½¢è¡Œåˆ—
 
-	//ƒNƒ[ƒ“
+	//ã‚¯ãƒ­ãƒ¼ãƒ³
 	cv::Mat temp = img.clone();
 
-	// ƒEƒBƒ“ƒhƒE‚ğ¶¬
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ç”Ÿæˆ
 	cv::namedWindow("GUI", CV_WINDOW_AUTOSIZE);
 
-	// ƒR[ƒ‹ƒoƒbƒN‚ğİ’è
+	// ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯ã‚’è¨­å®š
 	cv::setMouseCallback("GUI", my_mouse_callback, (void *)&img);
 
 	// Main loop
 	while (1) {
-		// image‚ğtemp‚ÉƒRƒs[
+		// imageã‚’tempã«ã‚³ãƒ”ãƒ¼
 		img.copyTo(temp);
 
-		//																								•½sˆÚ“®‚Ì—Ê
+		//																								å¹³è¡Œç§»å‹•ã®é‡
 		cv::Mat mat = (cv::Mat_<double>(2, 3) << 1.0, 0.0, 100, 0.0, 1.0, 100);
 		cv::warpAffine(*frame, temp, mat, temp.size(), CV_INTER_LINEAR, cv::BORDER_TRANSPARENT);
 		
@@ -80,7 +80,7 @@ void GUI::draw(vector<shared_ptr<Piece> > pie, shared_ptr<cv::Mat> frame) {
 
 		cv::imshow("GUI", temp);
 
-		// Esc‚ÅI—¹
+		// Escã§çµ‚äº†
 		if (cv::waitKey(15) == 27)
 			break;
 	}

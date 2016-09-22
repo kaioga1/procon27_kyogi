@@ -16,14 +16,42 @@ Piece::Piece(shared_ptr<cv::Mat> img, int number) {
 
 	imshow(str, *image);
 	search_vertex();
-	search_line();
-	search_angle();
+	//search_line();
+	//search_angle();
 	cout << endl;
 	//imshow(str, *image);
 	adr = cv::Point(10, 10);
 }
 
 void Piece::search_vertex() {
+	//srcは入力画像をMatに変換したものを渡すこととする
+	vector<vector<cv::Point>> squares;
+	vector<vector<cv::Point> > contours;// 輪郭情報
+	vector<vector<cv::Point> > poly;// ボリゴン情報
+
+											// 輪郭抽出
+	cv::findContours(*image, contours, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
+
+	for (size_t i = 0; i < contours.size(); i++)
+	{
+		cv::Mat contour = cv::Mat(contours[i]);
+
+		//凸包取得
+		vector<cv::Point> approx;
+		cv::convexHull(contour, approx);
+
+		// 輪郭・ポリライン近似 epsilonはarcLengthに対する割合で指定する
+		cv::approxPolyDP(approx, approx, 0.01 * cv::arcLength(contour, true), true);
+
+		if (approx.size() == 5) //ここでは頂点数4、つまり四辺形の頂点集合だけを対象にしている
+		{
+			//destは出力先のMat
+			cv::drawContours(*image, contours, i, CV_RGB(0, 0, 255), 4);
+			//ベクタに格納
+			squares.push_back(approx);
+		}
+	}
+	/*
 	//読み込んだ画像を元に頂点を求める
 	//描画用のキャンバスの作成
 	cv::Mat img = cv::Mat::zeros(500, 500, CV_8UC3);
@@ -105,7 +133,7 @@ void Piece::search_vertex() {
 			}
 		}
 	}
-	/*for (int i = 0; i < number_of_corner; i++) {
+	for (int i = 0; i < number_of_corner; i++) {
 		cout << *vertex[i] << endl;
 	}*/
 

@@ -29,14 +29,17 @@ int main(int argc, char **argv) {
 	for (int i = 0; i < N; i++) {
 		std::string str = "item/img (";
 		str += (char)(i + '1');
-		str += ").jpg";
+		str += ").png";
 		cv::Mat img = cv::imread(str);
 
 		//この関数でimgの白の部分が透過される
 		//正確に言うと(255, 255, 255)の部分
-		transmission(img);
 
-		cut(img);
+
+
+		//transmission(img);
+
+		//cut(img);
 
 		std::string st = "new_item/img";
 		st += (char)(i + '1');

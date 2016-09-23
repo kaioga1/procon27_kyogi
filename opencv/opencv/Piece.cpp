@@ -18,12 +18,15 @@ Piece::Piece(shared_ptr<cv::Mat> img, int num) {
 	//２値化
 	threshold(*image, *image, 90, 255, CV_THRESH_BINARY);
 
+	//画像の書き込み(確認のためなので特に意味はない
 	cv::imwrite("new_item/" + to_string(num + 1) + ".png", *image);
 
+	//頂点の検出
 	search_vertex();
+	//頂点より辺を求める
+	search_line();
 	imshow(str, *image);
 
-	//search_line();
 	//search_angle();
 	//imshow(str, *image);
 	adr = cv::Point(10, 10);
@@ -63,6 +66,7 @@ void Piece::search_vertex() {
 		vertex.push_back(make_shared<cv::Point>(approx[i]));
 		cout << *vertex[i] << " ";
 	}
+	number_of_corner = vertex.size();
 	cout << endl << endl;
 }
 
@@ -71,13 +75,11 @@ void Piece::search_line() {
 	double root = 0;
 	for (int i = 0; i < number_of_corner; i++) {
 		if (i == number_of_corner - 1) {
-			root = (vertex[i]->x - vertex[0]->x)*(vertex[i]->x - vertex[0]->x) + (vertex[i]->y - vertex[0]->y)*(vertex[i]->y - vertex[0]->y);
-			root = sqrt(root);
+			root = sqrt(pow(vertex[i]->x - vertex[0]->x, 2.0) + pow(vertex[i]->y - vertex[0]->y, 2.0));
 			line_lengths.push_back(make_shared<double>(root));
 		}
 		else {
-			root = (vertex[i]->x - vertex[i + 1]->x)*(vertex[i]->x - vertex[i + 1]->x) + (vertex[i]->y - vertex[i + 1]->y)*(vertex[i]->y - vertex[i + 1]->y);
-			root = sqrt(root);
+			root = sqrt(pow(vertex[i]->x - vertex[i+1]->x, 2.0) + pow(vertex[i]->y - vertex[i+1]->y, 2.0));
 			line_lengths.push_back(make_shared<double>(root));
 		}
 	}

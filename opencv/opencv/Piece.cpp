@@ -27,7 +27,7 @@ Piece::Piece(shared_ptr<cv::Mat> img, int num) {
 	search_line();
 	imshow(str, *image);
 
-	//search_angle();
+	search_angle();
 	//imshow(str, *image);
 	adr = cv::Point(10, 10);
 }
@@ -75,6 +75,7 @@ void Piece::search_line() {
 	double root = 0;
 	for (int i = 0; i < number_of_corner; i++) {
 		if (i == number_of_corner - 1) {
+			//二乗するから正負関係なしやで
 			root = sqrt(pow(vertex[i]->x - vertex[0]->x, 2.0) + pow(vertex[i]->y - vertex[0]->y, 2.0));
 			line_lengths.push_back(make_shared<double>(root));
 		}
@@ -87,115 +88,55 @@ void Piece::search_line() {
 	for (int i = 0; i < number_of_corner; i++) {
 		cout << *line_lengths[i] << endl;
 	}
+	cout << endl;
 }
 
 void Piece::search_angle() {
-	//vertex[0]->x = 0;
-	//頂点と辺から角度を求める
 	if (number_of_corner <= 2) {
-		cout << "存在しない多角形です" << endl;
+		exit(-1);
 	}
-	else {
-		double sum = 0;
-		double naiseki_x = 0;
-		double naiseki_y = 0;
-		double naiseki = 0;
-		double corner = 0;
-		double pie = 3.141592;
-		int binary[50] = { 0 };
-		for (int i = 0; i < number_of_corner; i++) {
-			if (i == number_of_corner - 1) {
-				if (vertex.size() == 1) {
-					break;
-				}
-				naiseki_x = (vertex[0]->x - vertex[i]->x) * (vertex[0]->x - vertex[1]->x);
-				naiseki_y = (vertex[0]->y - vertex[i]->y) * (vertex[0]->y - vertex[1]->y);
-				naiseki = naiseki_x + naiseki_y;
-				corner = naiseki / (*line_lengths[i] * *line_lengths[0]);
-				corner = acos(corner);
-				corner = corner * 180.0 / pie;
-				angle.push_back(make_shared<double>(corner));
-			}
-			else if (i == number_of_corner - 2) {
-				naiseki_x = (vertex[i + 1]->x - vertex[i]->x) * (vertex[i + 1]->x - vertex[0]->x);
-				naiseki_y = (vertex[i + 1]->y - vertex[i]->y) * (vertex[i + 1]->y - vertex[0]->y);
-				naiseki = naiseki_x + naiseki_y;
-				corner = naiseki / (*line_lengths[i] * *line_lengths[i + 1]);
-				corner = acos(corner);
-				corner = corner * 180.0 / pie;
-				angle.push_back(make_shared<double>(corner));
-			}
-			else {
-				naiseki_x = (vertex[i + 1]->x - vertex[i]->x) * (vertex[i + 1]->x - vertex[i + 2]->x);
-				naiseki_y = (vertex[i + 1]->y - vertex[i]->y) * (vertex[i + 1]->y - vertex[i + 2]->y);
-				naiseki = naiseki_x + naiseki_y;
-				corner = naiseki / (*line_lengths[i] * *line_lengths[i + 1]);
-				corner = acos(corner);
-				corner = corner * 180.0 / pie;
-				angle.push_back(make_shared<double>(corner));
-			}
+	//頂点と辺から角度を求める
+	/*
+	Aが求めたい角度
+	a^2 = b^2 + c^2 -2cosθ
+	θ = 1/2{(b^2 + c^2) - a^2}
+	という公式を使ってみる
+	http://www.geisya.or.jp/~mwm48961/kou2/cos_rule.htm
+	*/
+	//辺a, b, c
+	double a, b, c;
+	//頂点A, B, C
+	cv::Point A, B, C;
+	for (int i = 0; i < vertex.size(); i++) {
+		//三角形の頂点と辺の長さを割り出す
+		A = *vertex[i];
+		if (i == vertex.size() - 1) {
+			//最後
+			b = *line_lengths[i];
+			c = *line_lengths[i-1];
+			B = *vertex[i-1];
+			C = *vertex[0];
 		}
-		cout << endl;
+		else if (i == 0) {
+			//最初
+			b = *line_lengths[i];
+			c = *line_lengths[vertex.size() - 1];
+			B = *vertex[vertex.size() - 1];
+			C = *vertex[i+1];
+		}
+		else {
+			//その他他他他
+			b = *line_lengths[i];
+			c = *line_lengths[i - 1];
+			B = *vertex[i - 1];
+			C = *vertex[i+1];
+		}
+		a = sqrt(pow(B.x - C.x, 2.0) + pow(B.y - C.y, 2.0));
 
-		int roop = pow(2, number_of_corner);
-		for (int i = 0; i < roop; i++) {
-			//反転が必要なければbreak。
-			if ((number_of_corner - 2) * 180 < sum + 3 && (number_of_corner + 2) * 180 > sum + 3) {
-				break;
-			}
-			//反転のパターンを全部網羅するための処理
-			int memory = i;
-			for (int j = 0; j < number_of_corner; j++) {
-				binary[j] = 0;
-			}
-			for (int j = number_of_corner - 1; j >= 0; j--) {
-				int divison = pow(2, j);
-				if (memory / divison >= 1) {
-					binary[j] = 1;
-					memory = memory - divison;
-				}
-				cout << binary[j];
-			}
-			//反転させる処理
-			for (int j = 0; j < number_of_corner; j++) {
-				if (binary[j] == 1) {
-					*angle[j] = 360 - *angle[j];
-				}
-			}
-			//反転したものをたしあわせる
-			sum = 0;
-			for (int j = 0; j < number_of_corner; j++) {
-				sum = sum + *angle[j];
-			}
-			//反転してそれがあっているか確認する処理。誤差は+-3°。
-			if ((number_of_corner - 2) * 180 < sum + 3 && (number_of_corner + 2) * 180 > sum + 3) {
-				cout << endl;
-				break;
-			}
-			//違ったとき反転したものを元に戻す
-			for (int j = 0; j < number_of_corner; j++) {
-				if (binary[j] == 1) {
-					*angle[j] = 360 - *angle[j];
-				}
-			}
-			cout << endl;
-		}
-
-		for (int i = 0; i < number_of_corner; i++) {
-			if (angle.size() == 0) {
-				break;
-			}
-			double data = *angle[0];
-			if (i == number_of_corner - 1) {
-				*angle[i] = data;
-			}
-			else {
-				*angle[i] = *angle[i + 1];
-			}
-		}
-
-		for (int i = 0; i < number_of_corner; i++) {
-			cout << *angle[i] << endl;
-		}
+		double ang = acos((pow(b, 2.0) + pow(c, 2.0) - pow(a, 2.0))/(2.0 * b * c));
+		angle.push_back(make_shared<double>(ang * 180 / CV_PI));
+		cout << *angle[i] << endl;
 	}
+	cout << endl;
+	
 }

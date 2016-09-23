@@ -43,6 +43,8 @@ void Piece::search_vertex() {
 	std::vector< cv::Point > approx;
 	//輪郭のアドレスを格納
 	vector<vector<cv::Point> > contours;
+	//図に書き込み用(普通の配列でないとコンパイラが通らないので
+	cv::Point app[50];
 
 
 	//２値化のみ(情報量少なめ)
@@ -56,32 +58,36 @@ void Piece::search_vertex() {
 
 
 	// 各連結成分をランダムな色で描きます．
-	drawContours(dst, contours, 0, color, 1, 8);
+	//drawContours(dst, contours, 0, color, 1, 8);
 	//メンバ変数に代入
 	*image = dst;
 
 	//コマンドプロンプトへ出力＆vertexに代入&画面にかきこみ
 	for (int i = 0; i < approx.size(); i++) {
-		cv::circle(*image, approx[i], 5, cv::Scalar(0, 200, 0), 1, 8);
+		//判定の邪魔なのでコメントアウト
+		//cv::circle(*image, approx[i], 5, cv::Scalar(0, 200, 0), 1, 8);
 		vertex.push_back(make_shared<cv::Point>(approx[i]));
+		app[i] = approx[i];
 		cout << *vertex[i] << " ";
 	}
+
+	cv::fillConvexPoly(*image, app, approx.size(), color);
 	number_of_corner = vertex.size();
 	cout << endl << endl;
 }
 
 void Piece::search_line() {
 	//頂点を元に辺を求める
-	double root = 0;
+	double ang;
 	for (int i = 0; i < number_of_corner; i++) {
 		if (i == number_of_corner - 1) {
 			//二乗するから正負関係なしやで
-			root = sqrt(pow(vertex[i]->x - vertex[0]->x, 2.0) + pow(vertex[i]->y - vertex[0]->y, 2.0));
-			line_lengths.push_back(make_shared<double>(root));
+			ang = sqrt(pow(vertex[i]->x - vertex[0]->x, 2.0) + pow(vertex[i]->y - vertex[0]->y, 2.0));
+			line_lengths.push_back(make_shared<double>(ang));
 		}
 		else {
-			root = sqrt(pow(vertex[i]->x - vertex[i+1]->x, 2.0) + pow(vertex[i]->y - vertex[i+1]->y, 2.0));
-			line_lengths.push_back(make_shared<double>(root));
+			ang = sqrt(pow(vertex[i]->x - vertex[i+1]->x, 2.0) + pow(vertex[i]->y - vertex[i+1]->y, 2.0));
+			line_lengths.push_back(make_shared<double>(ang));
 		}
 	}
 

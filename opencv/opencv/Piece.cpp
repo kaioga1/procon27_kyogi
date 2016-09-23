@@ -30,76 +30,22 @@ Piece::Piece(shared_ptr<cv::Mat> img, int num) {
 }
 
 void Piece::search_vertex() {
-	// (1)load a specified file as a 3-channel color image
-	cv::Mat harris_img = *image;
-
-	// (2)convert to a grayscale image and normalize it
-	cv::Mat gray_img = *image;
-	//cvtColor(eigen_img, gray_img, CV_BGR2GRAY);
-	normalize(gray_img, gray_img, 0, 255, cv::NORM_MINMAX);
-
-	// (3)detect and draw strong corners on the image based on Eigen Value
-	vector<cv::Point2f> corners;
-	goodFeaturesToTrack(gray_img, corners, 80, 0.01, 5);
-	vector<cv::Point2f>::iterator it_corner = corners.begin();
-	for (; it_corner != corners.end(); ++it_corner) {
-		//circle(eigen_img, cv::Point(it_corner->x, it_corner->y), 1, cv::Scalar(0, 200, 255), -1);
-		//circle(eigen_img, cv::Point(it_corner->x, it_corner->y), 8, cv::Scalar(0, 200, 255));
-	}
-
-	// (4)detect and draw strong corners on the image using Harris detector
-	goodFeaturesToTrack(gray_img, corners, 5, 0.01, 3, cv::Mat(), 3, true);
-	it_corner = corners.begin();
-	for (; it_corner != corners.end(); ++it_corner) {
-		circle(harris_img, cv::Point(it_corner->x, it_corner->y), 1, cv::Scalar(0, 255, 0), -1);
-		circle(harris_img, cv::Point(it_corner->x, it_corner->y), 8, cv::Scalar(0, 255, 0));
-	}
-
-	// (5)detect corners using high-speed corner detection; FAST
-	int threshold = 100;
-	bool nonmax = true;
-	vector<cv::KeyPoint> keypoints;
-	FAST(gray_img, keypoints, threshold, nonmax);
-	vector<cv::KeyPoint>::iterator it_kp = keypoints.begin();
-	for (; it_kp != keypoints.end(); ++it_kp) {
-		//circle(fast_img, cv::Point(it_kp->pt.x, it_kp->pt.y), 1, cv::Scalar(50, 0, 255), -1);
-		//circle(fast_img, cv::Point(it_kp->pt.x, it_kp->pt.y), 8, cv::Scalar(50, 0, 255));
-	}
-
-	// (6)show destination images, and quit when any key pressed
-	//cv::imshow("EigenValue", eigen_img);
-	cv::imshow("Harris", harris_img);
-	//cv::imshow("Fast", fast_img);
-	cv::waitKey(0);
-
-	//srcは入力画像をMatに変換したものを渡すこととする
-	/*vector<vector<cv::Point>> squares;
-	vector<vector<cv::Point> > contours;// 輪郭情報
-	vector<vector<cv::Point> > poly;// ボリゴン情報
-
-											// 輪郭抽出
-	cv::findContours(*image, contours, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
-	*/
-	/*
+	//元データ
 	cv::Mat src = *image;
+	//出力先
 	cv::Mat dst = cv::Mat::zeros(src.rows, src.cols, CV_8UC3);
+	//色の指定(特に意味はない，きれいだから？
 	cv::Scalar color(rand() & 255, rand() & 255, rand() & 255);
 
+	//輪郭のアドレスを格納
 	vector<vector<cv::Point> > contours;
 	vector<cv::Vec4i> hierarchy;
 	findContours(src, contours, hierarchy,
 		CV_RETR_CCOMP, CV_CHAIN_APPROX_TC89_KCOS);
 
-	//vector<cv::Point> p = contours[1];
-	//cv::approxPolyDP(p, approx, 0.1 , true);
-
-	/*for (int i = 0; i < approx.size(); i++) {
-		cout << approx[i] << " ";
-	}
-
 	for (int i = 0; i < contours.size(); i++) {
 		if (contours[i][0].x == 1 || contours[i][0].y == 1) { 
-			//外線がなぜが枠とされていたので, 省く
+			//外線が仕様で枠とされているがいらないので消す
 			auto itr = contours[i].begin();
 			while (itr != contours[i].end()) {
 				itr = contours[i].erase(itr);
@@ -107,19 +53,53 @@ void Piece::search_vertex() {
 			continue; 
 		}
 		else {
-			//必要なのは始点と終点だけなのでその他の途中のデータは消去
-			/*auto itr = contours[i].begin();
-			while (itr + 1 != contours[i].end()) {
-				if (itr != contours[i].begin()) {
-					itr = contours[i].erase(itr);
+			/*
+			輪郭は取れているがすごく細かくされているので, 端辺を取る
+			新しいピース-前のピース→y/xの変化で判断
+			*/
+			//一つ前のピース
+			cv::Point old_piece = contours[i][1];
+			//ピース間の差
+			cv::Point old_p = contours[i][1] - contours[i][0];
+			//ピース間の変化量
+			double old_parameter = (double)old_p.y / (double)old_p.x;
+			cout << old_parameter << " ";
+			cout << old_piece << " " << contours[i][0] << endl;
+			for (auto itr = contours[i].begin() + 2; itr != contours[i].end(); itr++) {
+				//引き算した結果を格納
+				//変化量を格納
+				cv::Point p;
+				if (itr + 1 != contours[i].end())
+					p = contours[i][0] - old_piece;
+				else
+					p = *itr - old_piece;
+				double parameter = (double)p.y / (double)p.x;
+
+				if ((old_p.y > 0 && p.y < 0) || (old_p.y < 0 && p.y > 0) ||
+					(old_p.x > 0 && p.x < 0) || (old_p.x < 0 && p.x > 0)) {
+					vertex.push_back(make_shared<cv::Point>(old_piece));
 				}
-				else {
-					itr++;
-				}
+
+				/*if ((parameter > 0 && old_parameter < 0) || (parameter < 0 && old_parameter > 0)) {
+					vertex.push_back(make_shared<cv::Point>(old_piece));
+				}*/
+				/*if ((abs(parameter) > 1 && abs(old_parameter) < 1) || (abs(parameter) < 1 && abs(old_parameter) > 1)) {
+					vertex.push_back(make_shared<cv::Point>(old_piece));
+				}*/
+
+				
+
+				cout << parameter << " ";
+				cout << *itr << " " << old_piece << endl;
+
+
+				old_p = p;
+				old_parameter = parameter;
+				old_piece = *itr;
 			}
 		}
-		for (int j = 0; j < contours[i].size(); j++) {
-			cout << contours[i][j] << " ";
+		for (int j = 0; j < vertex.size(); j++) {
+			//cout << *vertex[i] << " ";
 		}
 	}
 	cout << endl;
@@ -130,9 +110,16 @@ void Piece::search_vertex() {
 	int idx = 0;
 
 	drawContours(dst, contours, idx, color, 1, 8, hierarchy);
-	*image = dst;*/
+	*image = dst;
 
+	cout << endl;
+	for (int i = 0; i < vertex.size(); i++) {
+		cv::circle(*image, *vertex[i], 5, cv::Scalar(0, 200, 0), 1, 8);
+		cout << *vertex[i] << " ";
 	}
+	cout << endl << endl;
+
+}
 
 void Piece::search_line() {
 	//頂点を元に辺を求める

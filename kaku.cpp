@@ -4,35 +4,34 @@
 #include <string.h>
 #include <stdlib.h>
 #include <vector>
-#define pieces 6//ƒs[ƒX‚Ì”
-#define N 90//‹‚ß‚½‚¢Šp“x
-#define M 150 //‹‚ß‚½‚¢•Ó
-#define gosa 1//Œë·
-
+#define pieces 6//ãƒ”ãƒ¼ã‚¹ã®æ•°
+#define N 90//æ±‚ã‚ãŸã„è§’åº¦
+#define M 150 //æ±‚ã‚ãŸã„è¾º
+#define gosa 1//èª¤å·®
 using namespace std;
 
 /*void mitsuha(){
-	cout << angle[0][0] << endl;
+cout << angle[0][0] << endl;
 }*/
 
 int main() {
-	//‰½”Ô–Ú‚Ìƒs[ƒX‚©
-	//int number;
-	//‰½ŠpŒ`‚©
-	//int number_of_corner;
-	//int i=0;
-	cv::Mat img = cv::Mat::zeros(10, 50, CV_8UC3);
+	cv::Mat img = cv::Mat::zeros(300, 300, CV_8UC3);
 
 	vector<vector<double> > line_length{ { 110,40,110,40 },{ 40,60,40,60 },{ 40,40,56.5685 },{ 50.5685,70,50 },{ 30,20,50,60 },{ 60,80,60,80 } };
 	vector<vector<double> > angle{ { 90,90,90,90 },{ 90,90,90,90 },{ 45,90,45 },{ 53.1302,81.8698,45 },{ 90,90,143.1302,36.8698 },{ 90,90,90,90 } };
 	vector<vector<cv::Point> > vertex{ {} };
 	for (int i = 0; i < pieces; i++) {
 		for (int j = 0; j < angle[i].size(); j++) {
+			if (angle[i][j] < N + gosa && angle[i][j] > N - gosa) {
+				cout << "angle[" << i << "][" << j << "]ã€€ã€€ã€€ã€€ã€€ã€€ã€€ è§’" << angle[i][j] << "ã§ã™ã€‚" << endl;
+			}
 			for (int k = i + 1; k < pieces; k++) {
 				for (int g = 0; g < angle[k].size(); g++) {
 					if (angle[i][j] + angle[k][g] < N + gosa && angle[i][j] + angle[k][g] > N - gosa) {
 						cout << "angle[" << i << "][" << j << "] & " << "angle[" << k << "][" << g << "] " <<
-						"Šp" << angle[i][j] << "‚Æ" << angle[k][g] << "‚ªƒZƒbƒg‚Å‚·B" << endl;
+							"è§’" << angle[i][j] << "ã¨" << angle[k][g] << "ãŒã‚»ãƒƒãƒˆã§ã™ã€‚" << endl;
+					}
+					else if (angle[i][j] + angle[k][g] < N - gosa) {
 						//mitsuha();
 					}
 				}
@@ -42,20 +41,21 @@ int main() {
 
 	for (int i = 0; i < pieces; i++) {
 		for (int j = 0; j < line_length[i].size(); j++) {
+			if (line_length[i][j] < N + gosa && line_length[i][j] > N - gosa) {
+				cout << "line_length[" << i << "][" << j << "]ã€€ã€€ã€€ã€€ã€€ã€€ã€€ è§’" << angle[i][j] << "ã§ã™ã€‚" << endl;
+			}
 			for (int k = i + 1; k < pieces; k++) {
 				for (int g = 0; g < line_length[k].size(); g++) {
 					if (line_length[i][j] + line_length[k][g] < M + gosa && line_length[i][j] + line_length[k][g] > M - gosa) {
 						cout << "line_length[" << i << "][" << j << "] & " << "line_length[" << k << "][" << g << "] " <<
-							"•Ó" << line_length[i][j] << "‚Æ" << line_length[k][g] << "‚ªƒZƒbƒg‚Å‚·B" << endl;
+							"è¾º" << line_length[i][j] << "ã¨" << line_length[k][g] << "ãŒã‚»ãƒƒãƒˆã§ã™ã€‚" << endl;
 					}
 				}
 			}
 		}
 	}
-	cout << angle[0][0] << angle[2].size() << angle[0].back() << endl;//“®ìƒeƒXƒg
+	cout << angle[0][0] << angle[2].size() << angle[0].back() << endl;//å‹•ä½œãƒ†ã‚¹ãƒˆ
 
-	imshow("hoge", img);
+	cv::imshow("hoge", img);
 	cv::waitKey(0);
-
-
 }

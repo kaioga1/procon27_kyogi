@@ -37,70 +37,33 @@ void Piece::search_vertex() {
 	//色の指定(特に意味はない，きれいだから？
 	cv::Scalar color(rand() & 255, rand() & 255, rand() & 255);
 	//近似データ
-
-
+	std::vector< cv::Point > approx;
 	//輪郭のアドレスを格納
 	vector<vector<cv::Point> > contours;
-	vector<cv::Vec4i> hierarchy;
-	//２値化のみ
+
+
+	//２値化のみ(情報量少なめ)
 	//findContours(src, contours, hierarchy,
 		//CV_RETR_CCOMP, CV_CHAIN_APPROX_TC89_KCOS);
+	//情報量を拡大
 	cv::findContours(src, contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
-
-	cout << contours.size() << endl;
-
-	/*for (int i = 0; i < contours.size(); i++) {
-		if (contours[i][0].x == 1 || contours[i][0].y == 1) {
-				auto itr = contours[i].begin();
-			while (itr != contours[i].end()) {
-				itr = contours[i].erase(itr);
-			}
-			continue;
-		}
-	}*/
-
-	std::vector< cv::Point > approx;
-	int roiCnt = 0;
-	for (int i = 0; i < contours[0].size(); i++) {
-		//cout << contours[contour][i] << endl;
-	}
 
 	//輪郭を直線近似する
 	cv::approxPolyDP(contours[0], approx, 0.01 * cv::arcLength(contours[0], true), true);
 
-	// 近似の面積が一定以上なら取得
-	double area = cv::contourArea(approx);
 
-	for (int i = 0; i < approx.size(); i++) {
-		cout << approx[i] << endl;
-	}
-	cout << endl;
-
-	//cv::waitKey();
-
-	// トップレベルにあるすべての輪郭を横断し，
 	// 各連結成分をランダムな色で描きます．
-	int idx = 0;
-
-	drawContours(dst, contours, idx, color, 1, 8, hierarchy);
-	//drawContours(dst, approx, idx, color, 1, 8, hierarchy);
+	drawContours(dst, contours, 0, color, 1, 8);
+	//メンバ変数に代入
 	*image = dst;
 
-	/*cout << endl;
-	for (int i = 0; i < vertex.size(); i++) {
-		cv::circle(*image, *vertex[i], 5, cv::Scalar(0, 200, 0), 1, 8);
+	//コマンドプロンプトへ出力＆vertexに代入&画面にかきこみ
+	for (int i = 0; i < approx.size(); i++) {
+		cv::circle(*image, approx[i], 5, cv::Scalar(0, 200, 0), 1, 8);
+		vertex.push_back(make_shared<cv::Point>(approx[i]));
 		cout << *vertex[i] << " ";
 	}
 	cout << endl << endl;
-	*/
-	cout << endl;
-	for (int i = 0; i < approx.size(); i++) {
-		cv::circle(*image, approx[i], 5, cv::Scalar(0, 200, 0), 1, 8);
-		cout << approx[i] << " ";
-	}
-	cout << endl << endl;
-
-
 }
 
 void Piece::search_line() {

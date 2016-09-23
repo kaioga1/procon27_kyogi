@@ -16,7 +16,7 @@ Piece::Piece(shared_ptr<cv::Mat> img, int num) {
 	str += (char)('1' + num);
 
 	//２値化
-	threshold(*image, *image, 100, 255, CV_THRESH_BINARY);
+	threshold(*image, *image, 90, 255, CV_THRESH_BINARY);
 
 	cv::imwrite("new_item/" + to_string(num + 1) + ".png", *image);
 
@@ -36,73 +36,46 @@ void Piece::search_vertex() {
 	cv::Mat dst = cv::Mat::zeros(src.rows, src.cols, CV_8UC3);
 	//色の指定(特に意味はない，きれいだから？
 	cv::Scalar color(rand() & 255, rand() & 255, rand() & 255);
+	//近似データ
+
 
 	//輪郭のアドレスを格納
 	vector<vector<cv::Point> > contours;
 	vector<cv::Vec4i> hierarchy;
-	findContours(src, contours, hierarchy,
-		CV_RETR_CCOMP, CV_CHAIN_APPROX_TC89_KCOS);
+	//２値化のみ
+	//findContours(src, contours, hierarchy,
+		//CV_RETR_CCOMP, CV_CHAIN_APPROX_TC89_KCOS);
+	cv::findContours(src, contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
 
-	for (int i = 0; i < contours.size(); i++) {
-		if (contours[i][0].x == 1 || contours[i][0].y == 1) { 
-			//外線が仕様で枠とされているがいらないので消す
-			auto itr = contours[i].begin();
+	cout << contours.size() << endl;
+
+	/*for (int i = 0; i < contours.size(); i++) {
+		if (contours[i][0].x == 1 || contours[i][0].y == 1) {
+				auto itr = contours[i].begin();
 			while (itr != contours[i].end()) {
 				itr = contours[i].erase(itr);
 			}
-			continue; 
+			continue;
 		}
-		else {
-			/*
-			輪郭は取れているがすごく細かくされているので, 端辺を取る
-			新しいピース-前のピース→y/xの変化で判断
-			*/
-			//一つ前のピース
-			cv::Point old_piece = contours[i][1];
-			//ピース間の差
-			cv::Point old_p = contours[i][1] - contours[i][0];
-			//ピース間の変化量
-			double old_parameter = (double)old_p.y / (double)old_p.x;
-			cout << old_parameter << " ";
-			cout << old_piece << " " << contours[i][0] << endl;
-			for (auto itr = contours[i].begin() + 2; itr != contours[i].end(); itr++) {
-				//引き算した結果を格納
-				//変化量を格納
-				cv::Point p;
-				if (itr + 1 != contours[i].end())
-					p = contours[i][0] - old_piece;
-				else
-					p = *itr - old_piece;
-				double parameter = (double)p.y / (double)p.x;
+	}*/
 
-				if ((old_p.y > 0 && p.y < 0) || (old_p.y < 0 && p.y > 0) ||
-					(old_p.x > 0 && p.x < 0) || (old_p.x < 0 && p.x > 0)) {
-					vertex.push_back(make_shared<cv::Point>(old_piece));
-				}
+	std::vector< cv::Point > approx;
+	int roiCnt = 0;
+	for (int i = 0; i < contours[0].size(); i++) {
+		//cout << contours[contour][i] << endl;
+	}
 
-				/*if ((parameter > 0 && old_parameter < 0) || (parameter < 0 && old_parameter > 0)) {
-					vertex.push_back(make_shared<cv::Point>(old_piece));
-				}*/
-				/*if ((abs(parameter) > 1 && abs(old_parameter) < 1) || (abs(parameter) < 1 && abs(old_parameter) > 1)) {
-					vertex.push_back(make_shared<cv::Point>(old_piece));
-				}*/
+	//輪郭を直線近似する
+	cv::approxPolyDP(contours[0], approx, 0.01 * cv::arcLength(contours[0], true), true);
 
-				
+	// 近似の面積が一定以上なら取得
+	double area = cv::contourArea(approx);
 
-				cout << parameter << " ";
-				cout << *itr << " " << old_piece << endl;
-
-
-				old_p = p;
-				old_parameter = parameter;
-				old_piece = *itr;
-			}
-		}
-		for (int j = 0; j < vertex.size(); j++) {
-			//cout << *vertex[i] << " ";
-		}
+	for (int i = 0; i < approx.size(); i++) {
+		cout << approx[i] << endl;
 	}
 	cout << endl;
+
 	//cv::waitKey();
 
 	// トップレベルにあるすべての輪郭を横断し，
@@ -110,14 +83,23 @@ void Piece::search_vertex() {
 	int idx = 0;
 
 	drawContours(dst, contours, idx, color, 1, 8, hierarchy);
+	//drawContours(dst, approx, idx, color, 1, 8, hierarchy);
 	*image = dst;
 
-	cout << endl;
+	/*cout << endl;
 	for (int i = 0; i < vertex.size(); i++) {
 		cv::circle(*image, *vertex[i], 5, cv::Scalar(0, 200, 0), 1, 8);
 		cout << *vertex[i] << " ";
 	}
 	cout << endl << endl;
+	*/
+	cout << endl;
+	for (int i = 0; i < approx.size(); i++) {
+		cv::circle(*image, approx[i], 5, cv::Scalar(0, 200, 0), 1, 8);
+		cout << approx[i] << " ";
+	}
+	cout << endl << endl;
+
 
 }
 

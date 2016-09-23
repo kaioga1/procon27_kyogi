@@ -25,10 +25,10 @@ Piece::Piece(shared_ptr<cv::Mat> img, int num) {
 	search_vertex();
 	//頂点より辺を求める
 	search_line();
-	imshow(str, *image);
-
+	//角度の検出
 	search_angle();
-	//imshow(str, *image);
+
+	imshow(str, *image);
 	adr = cv::Point(10, 10);
 }
 
@@ -98,6 +98,10 @@ void Piece::search_line() {
 }
 
 void Piece::search_angle() {
+	//画像にアクセス用
+	int dy[] = {-1, -1, -1, 0, 0, 1, 1, 1};
+	int dx[] = {-1, 0, 1, -1, 1, -1, 0, 1};
+	
 	if (number_of_corner <= 2) {
 		exit(-1);
 	}
@@ -113,6 +117,9 @@ void Piece::search_angle() {
 	double a, b, c;
 	//頂点A, B, C
 	cv::Point A, B, C;
+	//角度の総和
+	double sum_angle = 0;
+
 	for (int i = 0; i < vertex.size(); i++) {
 		//三角形の頂点と辺の長さを割り出す
 		A = *vertex[i];
@@ -139,10 +146,51 @@ void Piece::search_angle() {
 		}
 		a = sqrt(pow(B.x - C.x, 2.0) + pow(B.y - C.y, 2.0));
 
+		//公式を元にとりあえず角度を求める
 		double ang = acos((pow(b, 2.0) + pow(c, 2.0) - pow(a, 2.0))/(2.0 * b * c));
-		angle.push_back(make_shared<double>(ang * 180 / CV_PI));
+		ang = ang * 180 / CV_PI;
+
+		//凹凸で角度を認識するため
+		//凸包か凹包か
+		//8近傍の塗られている・塗られていない領域を数える
+		int fill = 0, not_fill = 0;
+		for (int k = 0; k < 8; k++) {
+			int x = A.x + dx[k];
+			int y = A.y + dy[k];
+			if (x >= 0 && y >= 0 && x < image->cols && y < image->rows) {
+				int sum = 0;
+				for (int i = 0; i < 3; i++) {
+					sum += (*image).at<cv::Vec3b>(y, x)[i];
+				}
+				if (sum == 0) {
+					not_fill++;
+				}
+				else {
+					fill++;
+				}
+			}
+			else {
+				//端っこにあった場合は凸包に間違いない
+				not_fill += 100;
+			}
+		}
+
+		//not_fillのほうが大きければ凸包なのでそのまま
+		if (fill > not_fill) {
+			//塗られてる面積のほうが大きければ
+			ang = 360 - ang;
+		}
+		else if (fill == not_fill) {
+			//厄介
+			//量が同じだったらアドレスを見る
+			//ang = 0;
+		}
+		sum_angle += ang;
+		angle.push_back(make_shared<double>(ang));
 		cout << *angle[i] << endl;
 	}
+	cout << "角度の総和" << endl;
+	cout << sum_angle << endl;
 	cout << endl;
 	
 }

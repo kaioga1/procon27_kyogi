@@ -1,19 +1,12 @@
 ﻿# include "Piece.h"
 
-
-/*Piece::Piece(int number_of_corner, shared_ptr<vector<double> > line_lengths,
-			shared_ptr<vector<cv::Point> > angle, shared_ptr<vector<cv::Point> > vertex) :
-	number_of_corner(number_of_corner),
-	line_lengths(line_lengths),
-	angle(angle), vertex(vertex){
-}*/
-
 Piece::Piece(shared_ptr<cv::Mat> img, int num) {
 	image = img;
 	number.push_back(num);
 	flag = false;
 	string str = "a";
 	str += (char)('1' + num);
+	color = cv::Scalar(rand() & 255, rand() & 255, rand() & 255);
 
 	//２値化
 	threshold(*image, *image, 90, 255, CV_THRESH_BINARY);
@@ -37,8 +30,6 @@ void Piece::search_vertex() {
 	cv::Mat src = *image;
 	//出力先
 	cv::Mat dst = cv::Mat::zeros(src.rows, src.cols, CV_8UC3);
-	//色の指定(特に意味はない，きれいだから？
-	cv::Scalar color(rand() & 255, rand() & 255, rand() & 255);
 	//近似データ
 	std::vector< cv::Point > approx;
 	//輪郭のアドレスを格納
@@ -65,7 +56,7 @@ void Piece::search_vertex() {
 	//コマンドプロンプトへ出力＆vertexに代入&画面にかきこみ
 	for (int i = 0; i < approx.size(); i++) {
 		//判定の邪魔なのでコメントアウト
-		//cv::circle(*image, approx[i], 5, cv::Scalar(0, 200, 0), 1, 8);
+		cv::circle(*image, approx[i], 5, cv::Scalar(0, 200, 0), 1, 8);
 		vertex.push_back(make_shared<cv::Point>(approx[i]));
 		app[i] = approx[i];
 		cout << *vertex[i] << " ";
@@ -77,6 +68,7 @@ void Piece::search_vertex() {
 }
 
 void Piece::search_line() {
+	cout << "辺の長さ" << endl;
 	//頂点を元に辺を求める
 	double ang;
 	for (int i = 0; i < number_of_corner; i++) {
@@ -120,6 +112,7 @@ void Piece::search_angle() {
 	//角度の総和
 	double sum_angle = 0;
 
+	cout << "角度" << endl;
 	for (int i = 0; i < vertex.size(); i++) {
 		//三角形の頂点と辺の長さを割り出す
 		A = *vertex[i];

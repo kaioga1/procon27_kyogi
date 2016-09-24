@@ -24,11 +24,12 @@ public:
 	vector<shared_ptr<double> > get_line_lengths() const { return line_lengths; }
 	vector<shared_ptr<double> > get_angle() const { return angle; }
 	vector<shared_ptr<cv::Point> > get_vertex() const { return vertex; }
+
+	void get_vertex(vector<shared_ptr<cv::Point> > ver){ vertex = ver; }
 	//必要そうなのでseter
 	/*void get_number_of_corner(int num ) { number_of_corner = num; }
 	void get_line_lengths(shared_ptr<vector<double> > lengths) { line_lengths = lengths; }
 	void get_angle(shared_ptr<vector<cv::Point> > ang) { angle = ang; }
-	void get_vertex(shared_ptr<vector<cv::Point> > ver){ vertex = ver; }
 	*/
 
 	//頂点を求める
@@ -43,6 +44,9 @@ public:
 	//画像ドゥエータ(データ)
 	shared_ptr<cv::Mat> image;
 	bool flag;
+	//色の指定(特に意味はない，きれいだから？
+	cv::Scalar color;
+
 	/*-------------*/
 private:
 	//実物のピースと対応させる。くっつけていくと複数になるのでvectorに変更

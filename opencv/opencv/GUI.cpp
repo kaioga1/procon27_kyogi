@@ -65,15 +65,29 @@ void GUI::draw(vector<shared_ptr<Piece> > pie, shared_ptr<Frame> frame) {
 		// imageをtempにコピー
 		img.copyTo(temp);
 
-		//																								平行移動の量
+		//Frameの描画
 		shared_ptr<cv::Mat> f = frame->image;
 		cv::Mat mat = (cv::Mat_<double>(2, 3) << 1.0, 0.0, 100, 0.0, 1.0, 100);
 		cv::warpAffine(*f, temp, mat, temp.size(), CV_INTER_LINEAR, cv::BORDER_TRANSPARENT);
 		
+		//ピースの描画
 		for (int i = 0; i < pieces.size(); i++) {
-			shared_ptr<cv::Mat> p = pieces[i]->image;
-			mat = (cv::Mat_<double>(2, 3) << 1.0, 0.0, pieces[i]->adr.x, 0.0, 1.0, pieces[i]->adr.y);
-			cv::warpAffine(*p, temp, mat, temp.size(), CV_INTER_LINEAR, cv::BORDER_TRANSPARENT);
+			shared_ptr<Piece> p = pieces[i];
+			vector<shared_ptr<cv::Point> > vertex = p->get_vertex();;
+			//角の数
+			int corner = p->get_number_of_corner();
+			for (int j = 0; j < corner; j++) {
+				if (j != corner - 1) {
+					line(temp, cv::Point(vertex[j]->x, vertex[j]->y), cv::Point(vertex[j + 1]->x, vertex[j + 1]->y), p->color, 1, 8);
+				}
+				else {
+					line(temp, cv::Point(vertex[j]->x, vertex[j]->y), cv::Point(vertex[0]->x, vertex[0]->y), p->color, 1, 8);
+				}
+	
+			}
+			//shared_ptr<cv::Mat> p = pieces[i]->image;
+			//mat = (cv::Mat_<double>(2, 3) << 1.0, 0.0, pieces[i]->adr.x, 0.0, 1.0, pieces[i]->adr.y);
+			//cv::warpAffine(*p, temp, mat, temp.size(), CV_INTER_LINEAR, cv::BORDER_TRANSPARENT);
 		}
 
 		if (moving) {

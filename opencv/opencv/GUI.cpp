@@ -16,8 +16,6 @@ GUI::GUI() {
 
 // コールバック関数
 void my_mouse_callback(int event, int x, int y, int flags, void* param) {
-	cv::Mat* image = static_cast<cv::Mat*>(param);
-
 	switch (event) {
 	case cv::EVENT_MOUSEMOVE:
 		if (lmoving) {
@@ -67,11 +65,8 @@ void my_mouse_callback(int event, int x, int y, int flags, void* param) {
 
 		rmoving = true;
 		for (int i = 0; i < pieces.size(); i++) {
-			//Pieceの画像データを取得
 			shared_ptr<cv::Mat> image = pieces[i]->image;
-			//Pieceの位置を取得
 			cv::Point adr = pieces[i]->adr;
-			//クリックした範囲内にあるか判定
 			if (x > adr.x && y > adr.y && x < adr.x + image->size().width && y < adr.y + image->size().height) {
 				vector<shared_ptr<cv::Point> > vertex = pieces[i]->get_vertex();
 				//変更前のデータを残しておく
@@ -81,7 +76,6 @@ void my_mouse_callback(int event, int x, int y, int flags, void* param) {
 				piece = pieces[i];
 				break;
 			}
-			//なければfalse
 			if (i == pieces.size() - 1) {rmoving = false;}
 		}
 		break;

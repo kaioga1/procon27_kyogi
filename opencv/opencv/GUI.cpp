@@ -60,6 +60,9 @@ void GUI::draw(vector<shared_ptr<Piece> > pie, shared_ptr<Frame> frame) {
 	// コールバックを設定
 	cv::setMouseCallback("GUI", my_mouse_callback, (void *)&img);
 
+	//ピース描画用
+	cv::Point app[50];
+
 	// Main loop
 	while (1) {
 		// imageをtempにコピー
@@ -76,18 +79,23 @@ void GUI::draw(vector<shared_ptr<Piece> > pie, shared_ptr<Frame> frame) {
 			vector<shared_ptr<cv::Point> > vertex = p->get_vertex();;
 			//角の数
 			int corner = p->get_number_of_corner();
+			//普通の配列じゃないとコンパイラが通らないので
+			for (int j = 0; j < corner; j++) {
+				app[j] = *vertex[j] + p->adr;
+			}
+			cv::fillConvexPoly(temp, app, corner, p->color);
+			//各線を書き込む
 			for (int j = 0; j < corner; j++) {
 				if (j != corner - 1) {
-					line(temp, cv::Point(vertex[j]->x, vertex[j]->y), cv::Point(vertex[j + 1]->x, vertex[j + 1]->y), p->color, 1, 8);
+					line(temp, cv::Point(vertex[j]->x + p->adr.x, vertex[j]->y + p->adr.y), 
+						cv::Point(vertex[j + 1]->x + p->adr.x, vertex[j + 1]->y + p->adr.y), p->color, 1, 8);
 				}
 				else {
-					line(temp, cv::Point(vertex[j]->x, vertex[j]->y), cv::Point(vertex[0]->x, vertex[0]->y), p->color, 1, 8);
+					line(temp, cv::Point(vertex[j]->x + p->adr.x, vertex[j]->y + p->adr.y), 
+						cv::Point(vertex[0]->x + p->adr.x, vertex[0]->y + p->adr.y), p->color, 1, 8);
 				}
 	
 			}
-			//shared_ptr<cv::Mat> p = pieces[i]->image;
-			//mat = (cv::Mat_<double>(2, 3) << 1.0, 0.0, pieces[i]->adr.x, 0.0, 1.0, pieces[i]->adr.y);
-			//cv::warpAffine(*p, temp, mat, temp.size(), CV_INTER_LINEAR, cv::BORDER_TRANSPARENT);
 		}
 
 		if (moving) {

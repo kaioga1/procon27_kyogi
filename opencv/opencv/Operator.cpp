@@ -17,7 +17,7 @@ void Operator::exec() {
 void Operator::read_image() {
 	//読み込んだ画像はimagesにpushしていく
 	//images->push_back(ほげほげ);
-	//ここぐらいはやってもらわないとこまる割合的に
+	//ここぐらいはやってもらわないとこまる割合的に(結局やった
 	for (int i = 1; i <= 7; i++) {
 		//string str = "new_item/img";
 		string str = "item/img (";

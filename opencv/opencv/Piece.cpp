@@ -21,7 +21,8 @@ Piece::Piece(shared_ptr<cv::Mat> img, int num) {
 	//角度の検出
 	search_angle();
 
-	imshow(str, *image);
+	//結果の画像の表示
+	//imshow(str, *image);
 	adr = cv::Point(10, 10);
 }
 
@@ -56,7 +57,7 @@ void Piece::search_vertex() {
 	//コマンドプロンプトへ出力＆vertexに代入&画面にかきこみ
 	for (int i = 0; i < approx.size(); i++) {
 		//判定の邪魔なのでコメントアウト
-		cv::circle(*image, approx[i], 5, cv::Scalar(0, 200, 0), 1, 8);
+		//cv::circle(*image, approx[i], 5, cv::Scalar(0, 200, 0), 1, 8);
 		vertex.push_back(make_shared<cv::Point>(approx[i]));
 		app[i] = approx[i];
 		cout << *vertex[i] << " ";

@@ -121,22 +121,10 @@ void GUI::draw(vector<shared_ptr<Piece> > pie, shared_ptr<Frame> frame) {
 			int corner = p->get_number_of_corner();
 			//普通の配列じゃないとコンパイラが通らないので
 			for (int j = 0; j < corner; j++) {
-				app[j] = *vertex[j] + p->adr;
+				app[j] = *vertex[j];
 			}
+			//多角形の書き込み
 			cv::fillConvexPoly(temp, app, corner, p->color);
-			//各線を書き込む
-			for (int j = 0; j < corner; j++) {
-				if (j != corner - 1) {
-					line(temp, cv::Point(vertex[j]->x + p->adr.x, vertex[j]->y + p->adr.y), 
-						cv::Point(vertex[j + 1]->x + p->adr.x, vertex[j + 1]->y + p->adr.y), p->color, 1, 8);
-				}
-				else {
-					line(temp, cv::Point(vertex[j]->x + p->adr.x, vertex[j]->y + p->adr.y), 
-						cv::Point(vertex[0]->x + p->adr.x, vertex[0]->y + p->adr.y), p->color, 1, 8);
-						cv::circle(temp, cv::Point(vertex[j]->x + p->adr.x, vertex[j]->y + p->adr.y), 5, cv::Scalar(0, 200, 0), 1, 8);
-				}
-	
-			}
 		}
 
 		cv::imshow("GUI", temp);

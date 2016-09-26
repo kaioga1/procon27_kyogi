@@ -32,7 +32,7 @@ void my_mouse_callback(int event, int x, int y, int flags, void* param) {
 			//回転した値を代入
 			cv::Point C;
 			cv::Point mi = piece->get_min_vertex();
-			double rad = (y - click_point.y)/100.0;
+			double rad = (y - click_point.y)/50.0;
 			for (int i = 0; i < piece->get_number_of_corner(); i++) {
 				C.x = min_point.x + (src_point[i].x - min_point.x) * cos(rad) - (src_point[i].y - min_point.y) * sin(rad);
 				C.y = min_point.y + (src_point[i].x - min_point.x) * sin(rad) + (src_point[i].y - min_point.y) * cos(rad);
@@ -134,7 +134,21 @@ void GUI::draw(vector<shared_ptr<Piece> > pie, shared_ptr<Frame> frame) {
 				app[j] = *vertex[j];
 			}
 			//多角形の書き込み
-			cv::fillConvexPoly(temp, app, corner, p->color);
+			//cv::fillConvexPoly(temp, app, corner, p->color);
+			//各線を書き込む
+			for (int j = 0; j < corner; j++) {
+				if (j != corner - 1) {
+					line(temp, cv::Point(vertex[j]->x, vertex[j]->y),
+						cv::Point(vertex[j + 1]->x, vertex[j + 1]->y), p->color, 1, 8);
+					
+				}
+				else {
+					line(temp, cv::Point(vertex[j]->x, vertex[j]->y),
+						cv::Point(vertex[0]->x, vertex[0]->y), p->color, 1, 8);
+					
+				}
+				cv::circle(temp, cv::Point(vertex[j]->x, vertex[j]->y), 5, cv::Scalar(0, 200, 0), 1, 8);
+			}
 		}
 
 		cv::imshow("GUI", temp);

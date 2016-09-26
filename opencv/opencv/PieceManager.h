@@ -24,6 +24,8 @@ public:
 
 	//ピースの初期化
 	void init_pieces(vector<shared_ptr<cv::Mat> > images);
+	//当たり判定
+	bool hit_judge(cv::Point edge1, cv::Point edge2);
 	
 
 private:

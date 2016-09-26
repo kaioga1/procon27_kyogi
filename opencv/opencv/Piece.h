@@ -40,7 +40,6 @@ public:
 	void search_angle();
 
 	/*----GUI用----*/
-	cv::Point adr;
 	//画像ドゥエータ(データ)
 	shared_ptr<cv::Mat> image;
 	bool flag;

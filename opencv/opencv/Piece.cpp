@@ -20,10 +20,6 @@ Piece::Piece(shared_ptr<cv::Mat> img, int num) {
 	search_line();
 	//角度の検出
 	search_angle();
-
-	//結果の画像の表示
-	//imshow(str, *image);
-	adr = cv::Point(10, 10);
 }
 
 cv::Point Piece::get_min_vertex() {
@@ -40,7 +36,7 @@ cv::Point Piece::get_min_vertex() {
 }
 
 cv::Point Piece::get_max_vertex() {
-	cv::Point ma(10000, 10000);
+	cv::Point ma(0, 0);
 	for (int i = 0; i < vertex.size(); i++) {
 		if (ma.x < vertex[i]->x) {
 			ma.x = vertex[i]->x;

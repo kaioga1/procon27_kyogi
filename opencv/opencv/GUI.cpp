@@ -5,10 +5,11 @@ bool lmoving = false;
 cv::Point mouse;
 vector<shared_ptr<Piece> > pieces;
 shared_ptr<Piece> piece = nullptr;
-//回転
 cv::Point click_point;	//クリックしたところの座標
+//回転
 vector<cv::Point> src_point; //元の座標の配列
 bool rmoving = false;
+cv::Point min_point;
 
 GUI::GUI() {
 	img = cv::Mat(cv::Size(960, 540), CV_8UC3, cv::Scalar(100, 100, 100));
@@ -19,18 +20,22 @@ void my_mouse_callback(int event, int x, int y, int flags, void* param) {
 	switch (event) {
 	case cv::EVENT_MOUSEMOVE:
 		if (lmoving) {
+			vector<shared_ptr<cv::Point> > vertex = piece->get_vertex();
 			//Mouseの位置ををピースに代入
-			piece->adr.x = x;
-			piece->adr.y = y;
+			for (int i = 0; i < piece->get_number_of_corner(); i++) {
+				vertex[i]->x = src_point[i].x + (x - click_point.x);
+				vertex[i]->y = src_point[i].y + (y - click_point.y);
+			}
 		}
 		else if (rmoving) {
+			vector<shared_ptr<cv::Point> > vertex = piece->get_vertex();
 			//回転した値を代入
 			cv::Point C;
-			double rad = (click_point.y - y)/100.0;
-			vector<shared_ptr<cv::Point> > vertex = piece->get_vertex();
+			cv::Point mi = piece->get_min_vertex();
+			double rad = (y - click_point.y)/100.0;
 			for (int i = 0; i < piece->get_number_of_corner(); i++) {
-				C.x = src_point[i].x * cos(rad) - src_point[i].y * sin(rad);
-				C.y = src_point[i].x * sin(rad) + src_point[i].y * cos(rad);
+				C.x = min_point.x + (src_point[i].x - min_point.x) * cos(rad) - (src_point[i].y - min_point.y) * sin(rad);
+				C.y = min_point.y + (src_point[i].x - min_point.x) * sin(rad) + (src_point[i].y - min_point.y) * cos(rad);
 				*vertex[i] = C;
 			}
 		}
@@ -39,13 +44,16 @@ void my_mouse_callback(int event, int x, int y, int flags, void* param) {
 	case cv::EVENT_LBUTTONDOWN:
 		lmoving = true;
 		for (int i = 0; i < pieces.size(); i++) {
-			//Pieceの画像データを取得
-			shared_ptr<cv::Mat> image = pieces[i]->image;
-			//Pieceの位置を取得
-			cv::Point adr = pieces[i]->adr;
+			vector<shared_ptr<cv::Point> > vertex = pieces[i]->get_vertex();
+			cv::Point mi = pieces[i]->get_min_vertex();
+			cv::Point ma = pieces[i]->get_max_vertex();
 			//クリックした範囲内にあるか判定
-			if (x > adr.x && y > adr.y && x < adr.x + image->size().width && y < adr.y + image->size().height) {
+			if (x > mi.x && y > mi.y && x < ma.x  && y < ma.y) {
+				for (int i = 0; i < vertex.size(); i++) {
+					src_point.push_back(*vertex[i]);
+				}
 				piece = pieces[i];
+				click_point = cv::Point(x, y);
 				break;
 			}
 			//なければfalse
@@ -54,6 +62,7 @@ void my_mouse_callback(int event, int x, int y, int flags, void* param) {
 		break;
 
 	case cv::EVENT_LBUTTONUP:
+		src_point.clear();
 		lmoving = false;
 		piece = nullptr;
 		break;
@@ -65,14 +74,15 @@ void my_mouse_callback(int event, int x, int y, int flags, void* param) {
 
 		rmoving = true;
 		for (int i = 0; i < pieces.size(); i++) {
-			shared_ptr<cv::Mat> image = pieces[i]->image;
-			cv::Point adr = pieces[i]->adr;
-			if (x > adr.x && y > adr.y && x < adr.x + image->size().width && y < adr.y + image->size().height) {
-				vector<shared_ptr<cv::Point> > vertex = pieces[i]->get_vertex();
+			vector<shared_ptr<cv::Point> > vertex = pieces[i]->get_vertex();
+			cv::Point mi = pieces[i]->get_min_vertex();
+			cv::Point ma = pieces[i]->get_max_vertex();
+			if (x > mi.x && y > mi.y && x < ma.x  && y < ma.y) {
 				//変更前のデータを残しておく
 				for (int i = 0; i < vertex.size(); i++) {
 					src_point.push_back(*vertex[i]);
 				}
+				min_point = mi;
 				piece = pieces[i];
 				break;
 			}

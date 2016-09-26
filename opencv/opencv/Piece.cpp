@@ -26,6 +26,32 @@ Piece::Piece(shared_ptr<cv::Mat> img, int num) {
 	adr = cv::Point(10, 10);
 }
 
+cv::Point Piece::get_min_vertex() {
+	cv::Point mi(10000, 10000);
+	for (int i = 0; i < vertex.size(); i++) {
+		if (mi.x > vertex[i]->x) {
+			mi.x = vertex[i]->x;
+		}
+		if (mi.y > vertex[i]->y) {
+			mi.y = vertex[i]->y;
+		}
+	}
+	return mi;
+}
+
+cv::Point Piece::get_max_vertex() {
+	cv::Point ma(10000, 10000);
+	for (int i = 0; i < vertex.size(); i++) {
+		if (ma.x < vertex[i]->x) {
+			ma.x = vertex[i]->x;
+		}
+		if (ma.y < vertex[i]->y) {
+			ma.y = vertex[i]->y;
+		}
+	}
+	return ma;
+}
+
 void Piece::search_vertex() {
 	//元データ
 	cv::Mat src = *image;

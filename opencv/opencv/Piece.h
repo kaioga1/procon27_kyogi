@@ -47,6 +47,10 @@ public:
 	//色の指定(特に意味はない，きれいだから？
 	cv::Scalar color;
 
+	//頂点の始点と終点を返す関数
+	cv::Point get_min_vertex();
+	cv::Point get_max_vertex();
+
 	/*-------------*/
 private:
 	//実物のピースと対応させる。くっつけていくと複数になるのでvectorに変更

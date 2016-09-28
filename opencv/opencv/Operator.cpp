@@ -32,4 +32,6 @@ void Operator::read_image() {
 
 void Operator::init_pieces() {
 	piece_manager->init_pieces(images);
+	piece_manager->angle_dt();//角検出
+	piece_manager->line_dt();//辺検出
 }

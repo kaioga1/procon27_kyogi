@@ -1,6 +1,8 @@
-﻿#pragma once
+#pragma once
 
 # include "Common.h"
+
+# include "combi.h"
 
 class Piece;
 
@@ -26,7 +28,11 @@ public:
 	void init_pieces(vector<shared_ptr<cv::Mat> > images);
 	//当たり判定
 	bool hit_judge(cv::Point edge1, cv::Point edge2);
-	
+	//角の組み合わせ検出
+	void angle_dt();
+	//辺の組み合わせ検出
+	void line_dt();
+
 
 private:
 	//ピースの配列

@@ -12,6 +12,7 @@ void PieceManager::init_pieces(vector<shared_ptr<cv::Mat> > images) {
 	}
 }
 
+//当たり判定　角度二つを渡して使ってください
 bool PieceManager::hit_judge(cv::Point edge1, cv::Point edge2) {
 
 	vector<shared_ptr<double>> angle1;
@@ -31,6 +32,100 @@ bool PieceManager::hit_judge(cv::Point edge1, cv::Point edge2) {
 
 }
 
+<<<<<<< HEAD
+//辺の長さと合うパターンの割り出し　長さを渡して使ってください
+void PieceManager::sertch_line(double to_find_line) {
+
+	//組み合わせたピースを格納する
+	vector<vector<shared_ptr<double> > > marged_line;
+	vector<vector<shared_ptr<double> > > line_clone;
+	//一度通ったところをふさぐための変数
+	vector<vector<shared_ptr<double>>> stack_deadend;
+	vector<shared_ptr<double> > line_once;
+	shared_ptr<double> line_min;
+	int test = 0;
+	int flag = 0;
+	//deadendを数える用の変数
+	int dcount = 0;
+	//marged_lineを数える用の変数
+	int mcount = 0;
+	stack<shared_ptr<double>> line_stack;
+	//一度通ったパターンを記録しておく変数
+
+
+	//二次元配列のcloneにパーツの辺の全情報を格納
+	for (int i = 0; i < pieces.size(); i++) {
+		line_once.push_back(shared_ptr<double>());
+		line_once = pieces[i]->get_line_lengths();
+		line_clone.push_back(vector<shared_ptr<double> >());
+		line_clone[i] = line_once;
+	}
+
+	//一番短い辺を求める。後で使う
+	line_min = line_clone[0][0];
+	for (int i = 0; i < line_clone.size(); i++){
+		for (int j = 0; j < line_clone[i].size(); j++) {
+			if (line_min > line_clone[i][j]) {
+				line_min = line_clone[i][j];
+			}
+		}
+
+	}
+
+	//pushしたらto_find_lineからpushした辺の分の長さを引くのを忘れずに
+
+	//深さ優先探索で実装
+	line_stack.push(line_clone[0][0]);
+	stack_deadend.push_back(vector<shared_ptr<double> >());
+	marged_line.push_back(vector<shared_ptr<double> >());
+	while (!line_stack.empty()) {
+		for (int i = 0; i < line_clone.size(); i++) {
+			for (int j = 0; j < line_clone[i].size(); j++) {
+				//to_find_lineと誤差が+-10までの辺をpush
+				if (*line_clone[i][j] - 10 <= to_find_line && *line_clone[i][j] + 10 >= to_find_line) {
+					line_stack.push(line_clone[i][j]);
+					marged_line[mcount].push_back(line_clone[i][j]);
+					to_find_line -= *line_clone[i][j]; //ひく
+					stack_deadend[dcount].push_back(line_clone[i][j]);
+					flag = 1;
+				}
+				//求めたい辺の長さより短いものをpushただし残りの辺が最小の辺より小さくならないように
+				else if (*line_clone[i][j] < to_find_line && to_find_line - *line_clone[i][j] >= *line_min) {
+					line_stack.push(line_clone[i][j]);
+					marged_line[mcount].push_back(line_clone[i][j]);
+					to_find_line -= *line_clone[i][j];
+					stack_deadend[dcount].push_back(line_clone[i][j]);
+					flag = 1;
+				}
+				if (flag == 1) {
+					break;
+				}
+			}
+			if (flag == 1) {
+				break;
+			}
+		}
+
+		//適する辺が見つかっていなければflagは0のはず(これ以上潜れない)
+		if (flag == 0) {
+			//次の行へ
+			stack_deadend.push_back(vector < shared_ptr<double> > ());
+			marged_line.pop_back();
+			to_find_line += *line_stack.top(); //たす
+			line_stack.pop(); //なくす
+		}
+
+		flag = 0;
+		//求めたい辺の長さが10以下だったときに答えとみなしてpushback
+		if (to_find_line <= 10) {
+			marged_line.push_back(vector<shared_ptr<double> >());
+			stack_deadend.push_back(vector < shared_ptr<double> >());
+			to_find_line += *line_stack.top();
+			line_stack.pop();
+		}
+	}
+}
+=======
 void PieceManager::angle_dt() { 
 	cv::Mat img = cv::Mat::zeros(300, 300, CV_8UC3);
 
@@ -134,3 +229,4 @@ void PieceManager::line_dt() {
 	cv::imshow("hoge", img);
 	cv::waitKey(0);
 }
+>>>>>>> origin/master

@@ -27,6 +27,8 @@ public:
 	//頂点・辺・角を求める
 	void init_pieces();
 
+	void sertch_line();
+
 private:
 	shared_ptr<PieceManager> piece_manager;
 	//画像が届き次第プログラムを書くと

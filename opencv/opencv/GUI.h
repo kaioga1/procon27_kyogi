@@ -8,6 +8,7 @@
 class GUI {
 public:
 	GUI();
+	//枠の更新を作るときに参考に
 	void draw(vector<shared_ptr<Piece> > pieces, shared_ptr<Frame> frame);
 
 private:

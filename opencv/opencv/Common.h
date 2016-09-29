@@ -12,6 +12,7 @@
 # include <cmath>
 # include <algorithm>
 # include <list>
+# include <stack>
 # include <queue>
 # include <vector>
 # include <memory>

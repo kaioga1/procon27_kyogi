@@ -10,6 +10,7 @@ void Operator::exec() {
 	read_image();
 	init_pieces();
 
+	sertch_line();
 	//GUI(計算結果の表示にも使える)
 	gui->draw(piece_manager->get_pieces(), frame);
 }
@@ -32,6 +33,14 @@ void Operator::read_image() {
 
 void Operator::init_pieces() {
 	piece_manager->init_pieces(images);
+<<<<<<< HEAD
+}
+
+void Operator::sertch_line() {
+	piece_manager->sertch_line(100);
+}
+=======
 	piece_manager->angle_dt();//角検出
 	piece_manager->line_dt();//辺検出
 }
+>>>>>>> origin/master

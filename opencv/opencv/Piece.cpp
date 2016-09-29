@@ -109,6 +109,7 @@ void Piece::search_line() {
 	for (int i = 0; i < number_of_corner; i++) {
 		cout << *line_lengths[i] << endl;
 	}
+	cout << line_lengths.size() << endl;
 	cout << endl;
 }
 

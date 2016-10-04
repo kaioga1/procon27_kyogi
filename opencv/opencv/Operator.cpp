@@ -10,8 +10,10 @@ void Operator::exec() {
 	read_image();
 	init_pieces();
 
+	piece_manager->exec_algorithm();
+
 	//GUI(計算結果の表示にも使える)
-	gui->draw(piece_manager->get_pieces(), frame);
+	//gui->draw(piece_manager->get_pieces(), frame);
 }
 
 void Operator::read_image() {
@@ -31,5 +33,5 @@ void Operator::read_image() {
 }
 
 void Operator::init_pieces() {
-	piece_manager->init_pieces(images);
+	piece_manager->init_pieces(images, frame);
 }

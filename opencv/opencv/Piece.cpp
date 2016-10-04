@@ -20,6 +20,7 @@ Piece::Piece(shared_ptr<cv::Mat> img, int num) {
 	search_line();
 	//角度の検出
 	search_angle();
+	cv::imshow(str, *image);
 }
 
 cv::Point Piece::get_min_vertex() {

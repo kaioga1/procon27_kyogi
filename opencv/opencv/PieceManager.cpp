@@ -280,8 +280,34 @@ void PieceManager::marge_piece() {
 				for (int l = 0; l < edge_clone[k].size(); l++) {
 					if (*edge_clone[i][j] + *edge_clone[k][l] < 360 + 5 && *edge_clone[i][j] + *edge_clone[k][l] > 360 - 5 && k > i) {
 						cout << *edge_clone[i][j] << "," << *edge_clone[k][l] << "," << *edge_clone[i][j] + *edge_clone[k][l] << endl;
-						cout << i + 1 << "," << j + 1 << " " << k + 1 << "," << l + 1 << endl;
-					if(){}
+						cout << i + 1 << "," << j + 1 << " " << k + 1 << "," << l + 1 << endl; 
+
+						if (*line_clone[i][j] < *line_clone[k][l] + 5 && *line_clone[i][j] > *line_clone[k][l] - 5) {
+							cout << "hoge" << endl;
+							if (*line_clone[i][j - 1] < *line_clone[k][l - 1] + 5 && *line_clone[i][j - 1] > *line_clone[k][l - 1] - 5) {
+								cout << "true" << endl;
+							}
+							else {
+								cout << "false" << endl;
+							}
+						}
+						else {
+							cout << "false" << endl;
+						}
+
+						if (*line_clone[i][j - 1] < *line_clone[k][l] + 5 && *line_clone[i][j - 1] > *line_clone[k][l] - 5) {
+							cout << "hoge" << endl;
+							if (*line_clone[i][j] < *line_clone[k][l - 1] + 5 && *line_clone[i][j] > *line_clone[k][l - 1] - 5) {
+								cout << "true" << endl;
+							}
+							else {
+								cout << "false" << endl;
+							}
+						}
+						else {
+							cout << "false" << endl;
+						}
+
 					}
 				}
 			}

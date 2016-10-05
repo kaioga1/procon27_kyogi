@@ -47,7 +47,7 @@ void PieceManager::sertch_line(double to_find_line) {
 	int sameflag = 0;
 	int limitflag = 0;
 	int sp = 0;
-	int sp_ex = 0;
+	int reject = 1;
 	stack<shared_ptr<double>> line_stack;
 	//ˆê“x’Ê‚Á‚½ƒpƒ^[ƒ“‚ğ‹L˜^‚µ‚Ä‚¨‚­•Ï”
 
@@ -71,6 +71,8 @@ void PieceManager::sertch_line(double to_find_line) {
 
 	}
 
+
+
 	//push‚µ‚½‚çto_find_line‚©‚çpush‚µ‚½•Ó‚Ì•ª‚Ì’·‚³‚ğˆø‚­‚Ì‚ğ–Y‚ê‚¸‚É
 
 	//[‚³—Dæ’Tõ‚ÅÀ‘•
@@ -82,8 +84,17 @@ void PieceManager::sertch_line(double to_find_line) {
 		for (int i = 0; i < line_clone.size(); i++) {
 			sameflag = 0;
 			for (int j = 0; j < line_clone[i].size(); j++) {
-				limitflag = 0;
 			//“¯‚¶}Œ`‚Ì•Ó‚ªŠÜ‚Ü‚ê‚È‚¢‚æ‚¤‚É‚·‚é
+				/*for (int k = 0; k + 1 < stack_deadend[stack_deadend.size() - 1].size(); k++) {
+					for (int l = 0; l + 1 < line_clone[i].size(); l++) {
+						if (stack_deadend[stack_deadend.size() - 1][k] == line_clone[i][l]) {
+							sameflag = 1;
+						}
+					}
+				}
+				if (sameflag == 1) {
+					break;
+				}*/
 				for (int x = 0; x < line_clone[i].size(); x++) {
 					for (int y = 0; y < stack_deadend[stack_deadend.size() - 1].size(); y++) {
 						if (line_clone[i][x] == stack_deadend[stack_deadend.size() - 1][y]) {
@@ -100,38 +111,26 @@ void PieceManager::sertch_line(double to_find_line) {
 				if (sameflag == 1) {
 					break;
 				}
-				//ˆê“x’Ê‚Á‚½‚Æ‚±‚ë‚É‚à‚®‚ê‚È‚¢‚æ‚¤‚É
-				sp = 0;
-				for (int x = 0; x < stack_deadend.size() - 1; x++) {
-					sp = 0;
-					for (int y = 0; y < stack_deadend[x].size(); y++) {
 
-						if (stack_deadend[x].size() == 1 || y == stack_deadend[x].size() - 1) {
-							if (stack_deadend[x][y] == line_clone[i][j]) {
-								sp++;
-							}
-						}
-						
-						else{
-							if (stack_deadend[x][y] == stack_deadend[stack_deadend.size() - 1][y]) {
-								sp++;
-							}
-						}
-					}
-					if (sp == stack_deadend[x].size()) {
+
+			//ˆê“x’Ê‚Á‚½‚Æ‚±‚ë‚É‚à‚®‚ê‚È‚¢‚æ‚¤‚É
+				limitflag = 0;
+				for (int k = 0; k + 1 < stack_deadend.size(); k++) {
+					stack_deadend[stack_deadend.size() - 1].push_back(line_clone[i][j]);
+
+					if (stack_deadend[stack_deadend.size() - 1] == stack_deadend[k]) {
 						limitflag = 1;
 					}
-					if (limitflag == 1) {
-						break;
-					}
+					stack_deadend[stack_deadend.size() - 1].pop_back();
 				}
+
 				//for“à‚ÌˆÈ‰º‚Ìˆ—‚ğ‚·‚×‚Ä‚©‚Á‚Æ‚Î‚·
 				if (limitflag == 1) {
 					continue;
 				}
 				
-				//to_find_line‚ÆŒë·‚ª+-10‚Ü‚Å‚Ì•Ó‚ğpush
-				if (*line_clone[i][j]<= to_find_line && *line_clone[i][j] >= to_find_line - 10) {
+				//to_find_line‚ÆŒë·‚ª-10‚Ü‚Å‚Ì•Ó‚ğpush
+				if (*line_clone[i][j]<= to_find_line && *line_clone[i][j] >= to_find_line - 5) {
 					line_stack.push(line_clone[i][j]);
 					marged_line[marged_line.size() - 1].push_back(line_clone[i][j]);
 					to_find_line -= *line_clone[i][j]; //‚Ğ‚­
@@ -170,7 +169,7 @@ void PieceManager::sertch_line(double to_find_line) {
 
 		flag = 0;
 		//‹‚ß‚½‚¢•Ó‚Ì’·‚³‚ª10ˆÈ‰º‚¾‚Á‚½‚Æ‚«‚É“š‚¦‚Æ‚İ‚È‚µ‚Äpushback
-		if (to_find_line <= 10) {
+		if (to_find_line <= 5) {
 			marged_line.push_back(vector<shared_ptr<double> >());
 			for (int i = 0; i < marged_line[marged_line.size() - 2].size(); i++) {
 				marged_line[marged_line.size() - 1].push_back(marged_line[marged_line.size() - 2][i]);
@@ -197,4 +196,96 @@ void PieceManager::sertch_line(double to_find_line) {
 		}
 		cout << endl;
 	}
+}
+
+void PieceManager::sertch_edge(vector<shared_ptr<double> > frame) {
+	vector<vector<shared_ptr<double> > > edge_clone;
+	vector<shared_ptr<double> > frame_edge;
+	shared_ptr<double> nearest_edge = 0;
+	double edge_sourse;
+	
+	for (int i = 0; i < pieces.size(); i++) {
+		edge_clone.push_back(pieces[i]->get_angle());
+	}
+	for (int i = 0; i < frame.size(); i++) {
+		frame_edge.push_back(frame[i]);
+	}
+	for (int i = 0; i < edge_clone.size(); i++) {
+		for (int j = 0; j < edge_clone[i].size(); j++) {
+			cout << *edge_clone[i][j] << " ";
+		}
+		cout << endl;
+	}
+	for (int i = 0; i < frame.size(); i++) {
+		cout << *frame_edge[i] << endl;
+	}
+	cout << endl;
+	//˜g‚ÌŠp‚ÌƒTƒCƒY‚Éˆê”Ô‹ß‚¢Šp‚ğŒ©‚Â‚¯‚éˆ—
+	edge_sourse = abs(*frame_edge[0] - *edge_clone[0][0]);
+	for (int i = 0; i < edge_clone.size(); i++) {
+		for (int j = 0; j < edge_clone[i].size(); j++) {
+			if (*edge_clone[i][j] < *frame_edge[0] + edge_sourse && *edge_clone[i][j] > *frame_edge[0] - edge_sourse){
+				edge_sourse = abs(*frame_edge[0] - *edge_clone[i][j]);
+				nearest_edge = edge_clone[i][j];
+				cout << *edge_clone[i][j] << endl;
+			}
+		}
+	}
+	cout << endl;
+	cout << edge_sourse << endl;
+}
+void PieceManager::Frame_update() {
+	
+}
+
+void PieceManager::Frame_record() {
+
+}
+
+void PieceManager::answer_draw() {
+
+}
+
+void PieceManager::marge_piece() {
+	vector<vector<shared_ptr<double> > > line_clone;
+	vector<vector<shared_ptr<double> > > edge_clone;
+
+	for (int i = 0; i < pieces.size(); i++) {
+		edge_clone.push_back(pieces[i]->get_angle());
+	}
+
+	for (int i = 0; i < pieces.size(); i++) {
+		line_clone.push_back(pieces[i]->get_line_lengths());
+	}
+
+	for (int i = 0; i < line_clone.size(); i++) {
+		for (int j = 0; j < line_clone[i].size(); j++) {
+			cout << *edge_clone[i][j] << " ";
+		}
+		cout << endl;
+	}
+	cout << endl;
+	for (int i = 0; i < line_clone.size(); i++) {
+		for (int j = 0; j < line_clone[i].size(); j++) {
+			cout << *line_clone[i][j] << " ";
+		}
+		cout << endl;
+	}
+
+	cout << endl;
+	//‘«‚·‚Æ360‚É‹ß‚¢ƒs[ƒX‚ğ’T‚·
+	for (int i = 0; i < edge_clone.size(); i++) {
+		for (int j = 0; j < edge_clone[i].size(); j++) {
+			for (int k = 0; k < edge_clone.size(); k++) {
+				for (int l = 0; l < edge_clone[k].size(); l++) {
+					if (*edge_clone[i][j] + *edge_clone[k][l] < 360 + 5 && *edge_clone[i][j] + *edge_clone[k][l] > 360 - 5 && k > i) {
+						cout << *edge_clone[i][j] << "," << *edge_clone[k][l] << "," << *edge_clone[i][j] + *edge_clone[k][l] << endl;
+						cout << i + 1 << "," << j + 1 << " " << k + 1 << "," << l + 1 << endl;
+					if(){}
+					}
+				}
+			}
+		}
+	}
+
 }

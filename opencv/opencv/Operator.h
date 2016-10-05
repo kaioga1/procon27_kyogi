@@ -19,6 +19,9 @@ public:
 	//クォンストラクタ(ふざけた
 	Operator();
 
+	//frame用のアクセサ
+	shared_ptr<Frame> get_frame() const { return frame; }
+
 	void exec();
 
 	//画像を読み込み
@@ -28,6 +31,10 @@ public:
 	void init_pieces();
 
 	void sertch_line();
+
+	void sertch_edge();
+
+	void marge_piece();
 
 private:
 	shared_ptr<PieceManager> piece_manager;

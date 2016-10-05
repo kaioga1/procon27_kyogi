@@ -10,9 +10,11 @@ void Operator::exec() {
 	read_image();
 	init_pieces();
 
-	int number_of_corner = frame->get_number_of_corner();
-	cout << number_of_corner << endl;
-	sertch_line();
+	//int number_of_corner = frame->get_number_of_corner();
+	//cout << number_of_corner << endl;
+	//sertch_line();
+	//sertch_edge();
+	marge_piece();
 	//GUI(計算結果の表示にも使える)
 	gui->draw(piece_manager->get_pieces(), frame);
 }
@@ -39,4 +41,13 @@ void Operator::init_pieces() {
 
 void Operator::sertch_line() {
 	piece_manager->sertch_line(343.013);
+}
+
+void Operator::sertch_edge() {
+	vector<shared_ptr<double> > frame_save = frame->get_angle();
+	piece_manager->sertch_edge(frame_save);
+}
+
+void Operator::marge_piece() {
+	piece_manager->marge_piece();
 }

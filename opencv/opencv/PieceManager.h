@@ -28,8 +28,16 @@ public:
 	bool hit_judge(cv::Point edge1, cv::Point edge2);
 	//辺と長さの合う辺の割り出し
 	void sertch_line(double to_find_line);
-	//↑の変数(一度だけ呼び出したいので)
-	static void sertch_line_val();
+	//一番近い角を探す
+	void sertch_edge(vector<shared_ptr<double> > frame);
+	//枠の更新
+	void Frame_update();
+	//枠の更新の記録
+	void Frame_record();
+	//答えの描画
+	void answer_draw();
+
+	void marge_piece();
 	
 	//角の組み合わせ検出
 	void angle_dt();

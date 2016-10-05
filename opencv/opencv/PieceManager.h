@@ -29,6 +29,8 @@ public:
 	void exec_algorithm();
 	//角度のサーチ関数
 	void search_angle();
+	//サーチで見つけたピースを枠にはめる
+	void put_image();
 private:
 	//ピースの配列
 	vector<shared_ptr<Piece> > pieces;

@@ -126,6 +126,7 @@ void GUI::draw(vector<shared_ptr<Piece> > pie, shared_ptr<Frame> frame) {
 		//ピースの描画
 		for (int i = 0; i < pieces.size(); i++) {
 			shared_ptr<Piece> p = pieces[i];
+			if (!p->put_flag)	continue;
 			vector<shared_ptr<cv::Point> > vertex = p->get_vertex();;
 			//角の数
 			int corner = p->get_number_of_corner();

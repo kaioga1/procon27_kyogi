@@ -13,8 +13,8 @@ void PieceManager::init_pieces(vector<shared_ptr<cv::Mat> > images, shared_ptr<F
 
 void PieceManager::exec_algorithm() {
 	search_angle();
+	put_image();
 }
-
 
 void PieceManager::search_angle() {
 	//フレームの角度
@@ -37,9 +37,20 @@ void PieceManager::search_angle() {
 					com.print();
 				}
 			}
-			cout << endl;
 		}
-		cout << endl;
 	}
 	cout << endl;
+}
+
+void PieceManager::put_image() {
+	//枠とピースの頂点座標を取ってくる
+	com_piece com = combination_angles[0];
+	vector<shared_ptr<cv::Point> > frame_vertex = frame->get_vertex();
+	vector<shared_ptr<cv::Point> > piece_vertex = pieces[com.num_piece]->get_vertex();
+	
+	cv::Point diff = *frame_vertex[com.num_frame_angle] - *piece_vertex[com.num_angle];
+	for (int i = 0; i < piece_vertex.size(); i++) {
+		*piece_vertex[i] -= diff;
+	}
+	pieces[com.num_piece]->put_flag = true;
 }

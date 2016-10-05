@@ -13,7 +13,7 @@ void Operator::exec() {
 	piece_manager->exec_algorithm();
 
 	//GUI(計算結果の表示にも使える)
-	//gui->draw(piece_manager->get_pieces(), frame);
+	gui->draw(piece_manager->get_pieces(), frame);
 }
 
 void Operator::read_image() {

@@ -3,7 +3,8 @@
 Piece::Piece(shared_ptr<cv::Mat> img, int num) {
 	image = img;
 	number.push_back(num);
-	flag = false;
+	reverse_flag = false;
+	put_flag = false;
 	string str = "a";
 	str += (char)('1' + num);
 	color = cv::Scalar(rand() & 255, rand() & 255, rand() & 255);

@@ -42,8 +42,11 @@ public:
 	/*----GUI用----*/
 	//画像ドゥエータ(データ)
 	shared_ptr<cv::Mat> image;
-	bool flag;
-	//色の指定(特に意味はない，きれいだから？
+	//反転したかどうか
+	bool reverse_flag;
+	//敷き詰めたかどうか(敷き詰めた場合はGUIに表示
+	bool put_flag;
+	//色の指定(みやすくするため
 	cv::Scalar color;
 
 	//頂点の始点と終点を返す関数

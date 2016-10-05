@@ -4,6 +4,16 @@
 # include "Piece.h"
 # include "Frame.h"
 
+struct com_piece {
+	int num_frame_angle;	//frameの角度の番号
+	int num_piece;				//ピースの番号
+	int num_angle;				//ピースの角度の番号
+
+	void print() {
+		cout << num_frame_angle << " " << num_piece <<
+			" " << num_angle << endl;
+	}
+};
 
 class PieceManager {
 public:
@@ -22,8 +32,8 @@ public:
 private:
 	//ピースの配列
 	vector<shared_ptr<Piece> > pieces;
-	//角度の組み合わせ格納 [フレームの角度の番号][ピースの番号] = ピースの角度の番号
-	vector<vector<int> > combination_angles;
+	//角度の組み合わせ格納 
+	vector<com_piece> combination_angles;
 	//フレームクラチュ
 	shared_ptr<Frame> frame;
 };

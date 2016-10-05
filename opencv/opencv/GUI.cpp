@@ -82,7 +82,7 @@ void my_mouse_callback(int event, int x, int y, int flags, void* param) {
 				for (int i = 0; i < vertex.size(); i++) {
 					src_point.push_back(*vertex[i]);
 				}
-				min_point = mi;
+				min_point = *(pieces[i]->get_vertex())[0];
 				piece = pieces[i];
 				break;
 			}
@@ -167,7 +167,6 @@ void GUI::draw(vector<shared_ptr<Piece> > pie, shared_ptr<Frame> frame) {
 				}
 				cv::circle(temp, cv::Point(vertex[j]->x, vertex[j]->y), 5, cv::Scalar(0, 200, 0), 1, 8);
 			}
-			
 		}
 
 		cv::imshow("GUI", temp);

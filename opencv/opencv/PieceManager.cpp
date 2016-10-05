@@ -50,7 +50,7 @@ void PieceManager::put_image() {
 	
 	cv::Point diff = *frame_vertex[com.num_frame_angle] - *piece_vertex[com.num_angle];
 	for (int i = 0; i < piece_vertex.size(); i++) {
-		*piece_vertex[i] = *frame_vertex[com.num_frame_angle];
+		*piece_vertex[i] += diff;
 	}
 	pieces[com.num_piece]->put_flag = true;
 }

@@ -112,17 +112,34 @@ void GUI::draw(vector<shared_ptr<Piece> > pie, shared_ptr<Frame> frame) {
 
 	//ピース描画用
 	cv::Point app[50];
+	//フレーム描画用
+	cv::Point frame_app[50];
+
+	//フレーム描画
+	vector<shared_ptr<cv::Point> > frame_vertex = frame->get_vertex();;
+	for (int j = 0; j < frame->get_number_of_corner(); j++) {
+		app[j] = *frame_vertex[j];
+	}
+	//Frameの描画
+	for (int j = 0; j < frame->get_number_of_corner() ; j++) {
+		if (j != frame->get_number_of_corner() - 1) {
+			line(img, cv::Point(frame_vertex[j]->x, frame_vertex[j]->y),
+				cv::Point(frame_vertex[j + 1]->x, frame_vertex[j + 1]->y), frame->color, 1, 8);
+
+		}
+		else {
+			line(img, cv::Point(frame_vertex[j]->x, frame_vertex[j]->y),
+				cv::Point(frame_vertex[0]->x, frame_vertex[0]->y), frame->color, 1, 8);
+
+		}
+		//cv::circle(img, cv::Point(frame_vertex[j]->x, frame_vertex[j]->y), 5, cv::Scalar(0, 200, 0), 1, 8);
+	}
 
 	// Main loop
 	while (1) {
 		// imageをtempにコピー
 		img.copyTo(temp);
 
-		//Frameの描画
-		shared_ptr<cv::Mat> f = frame->image;
-		cv::Mat mat = (cv::Mat_<double>(2, 3) << 1.0, 0.0, 100, 0.0, 1.0, 100);
-		cv::warpAffine(*f, temp, mat, temp.size(), CV_INTER_LINEAR, cv::BORDER_TRANSPARENT);
-		
 		//ピースの描画
 		for (int i = 0; i < pieces.size(); i++) {
 			shared_ptr<Piece> p = pieces[i];
@@ -150,6 +167,7 @@ void GUI::draw(vector<shared_ptr<Piece> > pie, shared_ptr<Frame> frame) {
 				}
 				cv::circle(temp, cv::Point(vertex[j]->x, vertex[j]->y), 5, cv::Scalar(0, 200, 0), 1, 8);
 			}
+			
 		}
 
 		cv::imshow("GUI", temp);

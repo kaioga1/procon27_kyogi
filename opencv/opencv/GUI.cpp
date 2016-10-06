@@ -31,7 +31,6 @@ void my_mouse_callback(int event, int x, int y, int flags, void* param) {
 			vector<shared_ptr<cv::Point> > vertex = piece->get_vertex();
 			//回転した値を代入
 			cv::Point C;
-			cv::Point mi = piece->get_min_vertex();
 			double rad = (y - click_point.y)/50.0;
 			for (int i = 0; i < piece->get_number_of_corner(); i++) {
 				C.x = min_point.x + (src_point[i].x - min_point.x) * cos(rad) - (src_point[i].y - min_point.y) * sin(rad);
@@ -44,6 +43,7 @@ void my_mouse_callback(int event, int x, int y, int flags, void* param) {
 	case cv::EVENT_LBUTTONDOWN:
 		lmoving = true;
 		for (int i = 0; i < pieces.size(); i++) {
+			if (!pieces[i]->put_flag)	continue;
 			vector<shared_ptr<cv::Point> > vertex = pieces[i]->get_vertex();
 			cv::Point mi = pieces[i]->get_min_vertex();
 			cv::Point ma = pieces[i]->get_max_vertex();
@@ -74,6 +74,7 @@ void my_mouse_callback(int event, int x, int y, int flags, void* param) {
 
 		rmoving = true;
 		for (int i = 0; i < pieces.size(); i++) {
+			if (!pieces[i]->put_flag)	continue;
 			vector<shared_ptr<cv::Point> > vertex = pieces[i]->get_vertex();
 			cv::Point mi = pieces[i]->get_min_vertex();
 			cv::Point ma = pieces[i]->get_max_vertex();
@@ -165,7 +166,7 @@ void GUI::draw(vector<shared_ptr<Piece> > pie, shared_ptr<Frame> frame) {
 						cv::Point(vertex[0]->x, vertex[0]->y), p->color, 1, 8);
 					
 				}
-				cv::circle(temp, cv::Point(vertex[j]->x, vertex[j]->y), 5, cv::Scalar(0, 200, 0), 1, 8);
+				//cv::circle(temp, cv::Point(vertex[j]->x, vertex[j]->y), 5, cv::Scalar(0, 200, 0), 1, 8);
 			}
 		}
 

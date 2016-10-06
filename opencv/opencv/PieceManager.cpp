@@ -250,6 +250,9 @@ void PieceManager::marge_piece() {
 	vector<vector<shared_ptr<double> > > line_clone;
 	vector<vector<shared_ptr<double> > > edge_clone;
 
+	vector<vector<shared_ptr<double> > > marge_pattern;
+	int count = 0;
+
 	for (int i = 0; i < pieces.size(); i++) {
 		edge_clone.push_back(pieces[i]->get_angle());
 	}
@@ -257,61 +260,60 @@ void PieceManager::marge_piece() {
 	for (int i = 0; i < pieces.size(); i++) {
 		line_clone.push_back(pieces[i]->get_line_lengths());
 	}
-
-	for (int i = 0; i < line_clone.size(); i++) {
-		for (int j = 0; j < line_clone[i].size(); j++) {
-			cout << *edge_clone[i][j] << " ";
-		}
-		cout << endl;
-	}
-	cout << endl;
-	for (int i = 0; i < line_clone.size(); i++) {
-		for (int j = 0; j < line_clone[i].size(); j++) {
-			cout << *line_clone[i][j] << " ";
-		}
-		cout << endl;
-	}
-
-	cout << endl;
 	//足すと360に近いピースを探す
+	marge_pattern.push_back(vector<shared_ptr<double> >());
 	for (int i = 0; i < edge_clone.size(); i++) {
 		for (int j = 0; j < edge_clone[i].size(); j++) {
 			for (int k = 0; k < edge_clone.size(); k++) {
 				for (int l = 0; l < edge_clone[k].size(); l++) {
-					if (*edge_clone[i][j] + *edge_clone[k][l] < 360 + 5 && *edge_clone[i][j] + *edge_clone[k][l] > 360 - 5 && k > i) {
+					if (*edge_clone[i][j] + *edge_clone[k][l] < 360 + 3 && *edge_clone[i][j] + *edge_clone[k][l] > 360 - 3 && k > i) {
+						int flag1 = 0;
+						int flag2 = 0;
 						cout << *edge_clone[i][j] << "," << *edge_clone[k][l] << "," << *edge_clone[i][j] + *edge_clone[k][l] << endl;
-						cout << i + 1 << "," << j + 1 << " " << k + 1 << "," << l + 1 << endl; 
+						cout << i + 1 << "," << j + 1 << " " << k + 1 << "," << l + 1 << endl;
 
-						if (*line_clone[i][j] < *line_clone[k][l] + 5 && *line_clone[i][j] > *line_clone[k][l] - 5) {
-							cout << "hoge" << endl;
-							if (*line_clone[i][j - 1] < *line_clone[k][l - 1] + 5 && *line_clone[i][j - 1] > *line_clone[k][l - 1] - 5) {
-								cout << "true" << endl;
-							}
-							else {
-								cout << "false" << endl;
-							}
+						if (*line_clone[i][j] - *line_clone[k][l] < 6 && *line_clone[i][j] - *line_clone[k][l] > -6) {
+							flag1++;
 						}
-						else {
-							cout << "false" << endl;
+						if (*line_clone[i][j - 1] - *line_clone[k][l - 1] < 6 && *line_clone[i][j - 1] - *line_clone[k][l - 1] > -6) {
+							flag1++;
 						}
-
-						if (*line_clone[i][j - 1] < *line_clone[k][l] + 5 && *line_clone[i][j - 1] > *line_clone[k][l] - 5) {
-							cout << "hoge" << endl;
-							if (*line_clone[i][j] < *line_clone[k][l - 1] + 5 && *line_clone[i][j] > *line_clone[k][l - 1] - 5) {
-								cout << "true" << endl;
-							}
-							else {
-								cout << "false" << endl;
-							}
+						if (*line_clone[i][j - 1] - *line_clone[k][l] < 6 && *line_clone[i][j - 1] - *line_clone[k][l] > -6) {
+							flag2++;
 						}
-						else {
-							cout << "false" << endl;
+						if (*line_clone[i][j] - *line_clone[k][l - 1] < 6 && *line_clone[i][j] - *line_clone[k][l - 1] > -6) {
+							flag2++;
 						}
 
+						if (flag1 == 2) {
+							cout << "これくっつきます" << endl;
+							marge_pattern[count].push_back(edge_clone[i][j]);
+							marge_pattern[count].push_back(edge_clone[k][l]);
+							marge_pattern[count].push_back(line_clone[i][j]);
+							marge_pattern[count].push_back(line_clone[k][l]);
+							marge_pattern[count].push_back(line_clone[i][j - 1]);
+							marge_pattern[count].push_back(line_clone[k][l - 1]);
+							marge_pattern.push_back(vector<shared_ptr<double> >());
+							count++;
+						}
+						if (flag2 == 2) {
+							cout << "これくっつくぞ" << endl;
+							marge_pattern[count].push_back(edge_clone[i][j]);
+							marge_pattern[count].push_back(edge_clone[k][l]);
+							marge_pattern[count].push_back(line_clone[i][j - 1]);
+							marge_pattern[count].push_back(line_clone[k][l]);
+							marge_pattern[count].push_back(line_clone[i][j]);
+							marge_pattern[count].push_back(line_clone[k][l - 1]);
+							marge_pattern.push_back(vector<shared_ptr<double> >());
+							count++;
+						}
 					}
 				}
 			}
 		}
 	}
+
+	//ピースをくっつける
+
 
 }

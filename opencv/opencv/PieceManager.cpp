@@ -287,25 +287,9 @@ void PieceManager::marge_piece() {
 
 						if (flag1 == 2) {
 							cout << "‚±‚ê‚­‚Á‚Â‚«‚Ü‚·" << endl;
-							marge_pattern[count].push_back(edge_clone[i][j]);
-							marge_pattern[count].push_back(edge_clone[k][l]);
-							marge_pattern[count].push_back(line_clone[i][j]);
-							marge_pattern[count].push_back(line_clone[k][l]);
-							marge_pattern[count].push_back(line_clone[i][j - 1]);
-							marge_pattern[count].push_back(line_clone[k][l - 1]);
-							marge_pattern.push_back(vector<shared_ptr<double> >());
-							count++;
 						}
 						if (flag2 == 2) {
 							cout << "‚±‚ê‚­‚Á‚Â‚­‚¼" << endl;
-							marge_pattern[count].push_back(edge_clone[i][j]);
-							marge_pattern[count].push_back(edge_clone[k][l]);
-							marge_pattern[count].push_back(line_clone[i][j - 1]);
-							marge_pattern[count].push_back(line_clone[k][l]);
-							marge_pattern[count].push_back(line_clone[i][j]);
-							marge_pattern[count].push_back(line_clone[k][l - 1]);
-							marge_pattern.push_back(vector<shared_ptr<double> >());
-							count++;
 						}
 					}
 				}
@@ -314,6 +298,6 @@ void PieceManager::marge_piece() {
 	}
 
 	//ƒs[ƒX‚ğ‚­‚Á‚Â‚¯‚é
-
+	
 
 }

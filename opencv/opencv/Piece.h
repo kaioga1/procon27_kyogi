@@ -39,6 +39,8 @@ public:
 	//角度を求める
 	void search_angle();
 
+	void cut_image();
+
 	/*----GUI用----*/
 	//画像ドゥエータ(データ)
 	shared_ptr<cv::Mat> image;

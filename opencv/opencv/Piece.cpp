@@ -8,8 +8,11 @@ Piece::Piece(shared_ptr<cv::Mat> img, int num) {
 	str += (char)('1' + num);
 	color = cv::Scalar(rand() & 255, rand() & 255, rand() & 255);
 
+	cut_image();
+
 	//２値化
-	threshold(*image, *image, 90, 255, CV_THRESH_BINARY);
+	threshold(*image, *image, 50, 255, CV_THRESH_BINARY);
+	cv::imshow(str, *image);
 
 	//画像の書き込み(確認のためなので特に意味はない
 	cv::imwrite("new_item/" + to_string(num + 1) + ".png", *image);
@@ -109,7 +112,6 @@ void Piece::search_line() {
 	for (int i = 0; i < number_of_corner; i++) {
 		cout << *line_lengths[i] << endl;
 	}
-	cout << line_lengths.size() << endl;
 	cout << endl;
 }
 
@@ -210,4 +212,93 @@ void Piece::search_angle() {
 	cout << sum_angle << endl;
 	cout << endl;
 	
+}
+
+// グローバル変数
+cv::Rect box;
+bool drawing_box = false;
+cv::Point start;
+cv::Point stop;
+cv::Mat frame;
+
+void draw_box(cv::Mat* img, cv::Rect rect) {
+	cv::rectangle(*img, cv::Point2d(box.x, box.y), cv::Point2d(box.x + box.width, box.y + box.height),
+		cv::Scalar(0xff, 0x00, 0x00));
+}
+
+// コールバック関数
+void my_mouse_callback(int event, int x, int y, int flags, void* param) {
+	cv::Mat* image = static_cast<cv::Mat*>(param);
+
+	switch (event) {
+	/*case cv::EVENT_MOUSEMOVE:
+		if (drawing_box) {
+			box.width = x - box.x;
+			box.height = y - box.y;
+		}
+		break;*/
+
+	case cv::EVENT_LBUTTONDOWN:
+		drawing_box = true;
+		box = cv::Rect(x, y, 0, 0);
+		start.x = x;
+		start.y = y;
+		cout << "start" << endl;
+		cout << start << endl;
+		break;
+
+	case cv::EVENT_LBUTTONUP:
+		drawing_box = false;
+		stop.x = x;
+		stop.y = y;
+		cout << "stop" << endl;
+		cout << stop << endl;
+			/*if (box.width < 0) {
+				box.x += box.width;
+				box.width *= -1;
+			}
+			if (box.height < 0) {
+				box.y += box.height;
+				box.height *= -1;
+			}
+			draw_box(image, box);*/
+		cv::Mat cut_img(frame, cv::Rect(start , stop));
+		cv::imwrite("new_item/frame.png", cut_img);
+			break;
+	}
+}
+
+void Piece::cut_image() {
+	std::string name = "Box Example";
+	box = cv::Rect(-1, -1, 0, 0);
+	
+	/* //灰色の画像を生成
+	cv::Mat image(cv::Size(960, 540), CV_8UC3, cv::Scalar(100, 100, 100));*/
+	cv::Mat temp = frame.clone();
+
+	frame = cv::imread("item/frame.png", 0);
+
+	// ウィンドウを生成
+	cv::namedWindow("name", CV_WINDOW_AUTOSIZE);
+
+
+	// コールバックを設定
+	cv::setMouseCallback("name", my_mouse_callback, (void *)&frame);
+
+	// Main loop
+	while (1) {
+		// frameをtempにコピー
+		frame.copyTo(temp);
+
+		// マウスの左クリックを離すまでの間、矩形を一時的に描画
+		/*if (drawing_box) {
+			draw_box(&frame, box);
+		}*/
+
+		cv::imshow("name",temp);
+
+		// Escで終了
+		if (cv::waitKey(15) == 27)
+			break;
+	}
 }

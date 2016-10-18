@@ -36,6 +36,10 @@ public:
 
 	void marge_piece();
 
+	void line_dt();
+
+	void cut_image(string str);
+
 private:
 	shared_ptr<PieceManager> piece_manager;
 	//画像が届き次第プログラムを書くと

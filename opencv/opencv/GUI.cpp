@@ -6,7 +6,7 @@ cv::Point mouse;
 vector<shared_ptr<Piece> > pieces;
 shared_ptr<Piece> piece = nullptr;
 cv::Point click_point;	//クリックしたところの座標
-//回転
+						//回転
 vector<cv::Point> src_point; //元の座標の配列
 bool rmoving = false;
 cv::Point min_point;
@@ -31,8 +31,7 @@ void my_mouse_callback(int event, int x, int y, int flags, void* param) {
 			vector<shared_ptr<cv::Point> > vertex = piece->get_vertex();
 			//回転した値を代入
 			cv::Point C;
-			cv::Point mi = piece->get_min_vertex();
-			double rad = (y - click_point.y)/50.0;
+			double rad = (y - click_point.y) / 50.0;
 			for (int i = 0; i < piece->get_number_of_corner(); i++) {
 				C.x = min_point.x + (src_point[i].x - min_point.x) * cos(rad) - (src_point[i].y - min_point.y) * sin(rad);
 				C.y = min_point.y + (src_point[i].x - min_point.x) * sin(rad) + (src_point[i].y - min_point.y) * cos(rad);
@@ -40,10 +39,11 @@ void my_mouse_callback(int event, int x, int y, int flags, void* param) {
 			}
 		}
 		break;
-	//左クリックでピースを移動
+		//左クリックでピースを移動
 	case cv::EVENT_LBUTTONDOWN:
 		lmoving = true;
 		for (int i = 0; i < pieces.size(); i++) {
+			if (!pieces[i]->put_flag)	continue;
 			vector<shared_ptr<cv::Point> > vertex = pieces[i]->get_vertex();
 			cv::Point mi = pieces[i]->get_min_vertex();
 			cv::Point ma = pieces[i]->get_max_vertex();
@@ -66,7 +66,7 @@ void my_mouse_callback(int event, int x, int y, int flags, void* param) {
 		lmoving = false;
 		piece = nullptr;
 		break;
-	//右クリックで回転を行う
+		//右クリックで回転を行う
 	case cv::EVENT_RBUTTONDOWN:
 		//現在の座標を格納
 		click_point.x = x;
@@ -74,6 +74,7 @@ void my_mouse_callback(int event, int x, int y, int flags, void* param) {
 
 		rmoving = true;
 		for (int i = 0; i < pieces.size(); i++) {
+			if (!pieces[i]->put_flag)	continue;
 			vector<shared_ptr<cv::Point> > vertex = pieces[i]->get_vertex();
 			cv::Point mi = pieces[i]->get_min_vertex();
 			cv::Point ma = pieces[i]->get_max_vertex();
@@ -82,11 +83,11 @@ void my_mouse_callback(int event, int x, int y, int flags, void* param) {
 				for (int i = 0; i < vertex.size(); i++) {
 					src_point.push_back(*vertex[i]);
 				}
-				min_point = mi;
+				min_point = *(pieces[i]->get_vertex())[0];
 				piece = pieces[i];
 				break;
 			}
-			if (i == pieces.size() - 1) {rmoving = false;}
+			if (i == pieces.size() - 1) { rmoving = false; }
 		}
 		break;
 	case cv::EVENT_RBUTTONUP:
@@ -112,20 +113,38 @@ void GUI::draw(vector<shared_ptr<Piece> > pie, shared_ptr<Frame> frame) {
 
 	//ピース描画用
 	cv::Point app[50];
+	//フレーム描画用
+	cv::Point frame_app[50];
+
+	//フレーム描画
+	vector<shared_ptr<cv::Point> > frame_vertex = frame->get_vertex();;
+	for (int j = 0; j < frame->get_number_of_corner(); j++) {
+		app[j] = *frame_vertex[j];
+	}
+	//Frameの描画
+	for (int j = 0; j < frame->get_number_of_corner(); j++) {
+		if (j != frame->get_number_of_corner() - 1) {
+			line(img, cv::Point(frame_vertex[j]->x, frame_vertex[j]->y),
+				cv::Point(frame_vertex[j + 1]->x, frame_vertex[j + 1]->y), frame->color, 1, 8);
+
+		}
+		else {
+			line(img, cv::Point(frame_vertex[j]->x, frame_vertex[j]->y),
+				cv::Point(frame_vertex[0]->x, frame_vertex[0]->y), frame->color, 1, 8);
+
+		}
+		//cv::circle(img, cv::Point(frame_vertex[j]->x, frame_vertex[j]->y), 5, cv::Scalar(0, 200, 0), 1, 8);
+	}
 
 	// Main loop
 	while (1) {
 		// imageをtempにコピー
 		img.copyTo(temp);
 
-		//Frameの描画
-		shared_ptr<cv::Mat> f = frame->image;
-		cv::Mat mat = (cv::Mat_<double>(2, 3) << 1.0, 0.0, 100, 0.0, 1.0, 100);
-		cv::warpAffine(*f, temp, mat, temp.size(), CV_INTER_LINEAR, cv::BORDER_TRANSPARENT);
-		
 		//ピースの描画
 		for (int i = 0; i < pieces.size(); i++) {
 			shared_ptr<Piece> p = pieces[i];
+			//if (!p->put_flag)	continue;
 			vector<shared_ptr<cv::Point> > vertex = p->get_vertex();;
 			//角の数
 			int corner = p->get_number_of_corner();
@@ -140,14 +159,14 @@ void GUI::draw(vector<shared_ptr<Piece> > pie, shared_ptr<Frame> frame) {
 				if (j != corner - 1) {
 					line(temp, cv::Point(vertex[j]->x, vertex[j]->y),
 						cv::Point(vertex[j + 1]->x, vertex[j + 1]->y), p->color, 1, 8);
-					
+
 				}
 				else {
 					line(temp, cv::Point(vertex[j]->x, vertex[j]->y),
 						cv::Point(vertex[0]->x, vertex[0]->y), p->color, 1, 8);
-					
+
 				}
-				cv::circle(temp, cv::Point(vertex[j]->x, vertex[j]->y), 5, cv::Scalar(0, 200, 0), 1, 8);
+				//cv::circle(temp, cv::Point(vertex[j]->x, vertex[j]->y), 5, cv::Scalar(0, 200, 0), 1, 8);
 			}
 		}
 

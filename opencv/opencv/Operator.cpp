@@ -14,17 +14,6 @@ Operator::Operator() {
 void Operator::exec() {
 	read_image();
 	init_pieces();
-
-
-	//piece_manager->exec_algorithm();
-	//int number_of_corner = frame->get_number_of_corner();
-	//cout << number_of_corner << endl;
-	//sertch_line();
-	//sertch_edge();
-	marge_piece();
-	//line_dt();
-	//GUI(計算結果の表示にも使える)
-	//gui->draw(piece_manager->get_pieces(), frame);
 }
 
 void Operator::read_image() {
@@ -55,25 +44,6 @@ void Operator::read_image() {
 
 void Operator::init_pieces() {
 	piece_manager->init_pieces(images,frame);
-}
-
-void Operator::sertch_line() {
-	piece_manager->sertch_line(343.013);
-}
-
-void Operator::sertch_edge() {
-	vector<shared_ptr<double> > frame_save = frame->get_angle();
-	piece_manager->sertch_edge(frame_save);
-}
-
-void Operator::marge_piece() {
-	piece_manager->marge_piece();
-}
-
-void Operator::line_dt() {
-	vector<shared_ptr<double> > frame_angle = frame->get_angle();
-	vector<shared_ptr<double> > frame_line = frame->get_line_lengths();
-	piece_manager->line_dt(frame_angle, frame_line);
 }
 
 cv::Rect box;

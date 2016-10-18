@@ -712,6 +712,7 @@ void PieceManager::line_dt(vector<shared_ptr<double> > frame_angle,vector<shared
 							}
 						}
 
+<<<<<<< HEAD
 						if (*angle[i][j] + *angle[k][g] < *frame_angle[x] + gosa && *angle[i][j] + *angle[k][g] > *frame_angle[x] - gosa) {
 							cout << "angle[" << i << "][" << j << "] & " << "angle[" << k << "][" << g << "] " <<
 								"角" << *angle[i][j] << "と" << *angle[k][g] << "がセットです。" << endl;
@@ -721,6 +722,13 @@ void PieceManager::line_dt(vector<shared_ptr<double> > frame_angle,vector<shared
 							a++;
 						}
 						else if (*angle[i][j] + *angle[k][g] < *frame_angle[x] - gosa) {
+=======
+						if (flag1 == 2) {
+							cout << "これくっつきます" << endl;
+						}
+						if (flag2 == 2) {
+							cout << "これくっつくぞ" << endl;
+>>>>>>> origin/master
 						}
 					}
 				}
@@ -728,6 +736,7 @@ void PieceManager::line_dt(vector<shared_ptr<double> > frame_angle,vector<shared
 		}
 	}
 
+<<<<<<< HEAD
 	/*for (int i = 0; i < a; i++) {
 		cout << endl;
 		for (int j = 0;j < angle_pt[i].size();j++) {
@@ -740,4 +749,8 @@ void PieceManager::line_dt(vector<shared_ptr<double> > frame_angle,vector<shared
 	angle_pt[a].push_back(make_pair(i, j));
 	
 }*/
+=======
+	//ピースをくっつける
+	
+>>>>>>> origin/master
 
